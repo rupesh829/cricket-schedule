@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cricket Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0f;--surface:#111418;--surface2:#181c22;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e2e8f0;--muted:#64748b;
+  --accent:#22d3ee;--green:#4ade80;--yellow:#fbbf24;--red:#f87171;
+  --radius:10px;
+  --mono:'DM Mono',monospace;--serif:'Instrument Serif',serif;--sans:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;font-size:14px;line-height:1.5}
+
+/* ── Header ── */
+.hdr{padding:22px 20px 0;max-width:1200px;margin:0 auto}
+.hdr-top{display:flex;align-items:baseline;justify-content:space-between}
+.logo{font-family:var(--serif);font-size:26px;color:#fff}
+.logo em{color:var(--accent);font-style:italic}
+.sync-lbl{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.tagline{font-size:12px;color:var(--muted);margin:2px 0 16px}
+
+/* ── Tabs ── */
+.tabs-wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.tabs{display:flex;gap:2px;background:var(--surface);border-radius:var(--radius);padding:3px;width:fit-content;margin-bottom:16px}
+.tab{padding:6px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);border:none;background:none;transition:all .2s}
+.tab.active{background:var(--accent);color:#000}
+
+.main{max-width:1200px;margin:0 auto;padding:0 20px 60px}
+
+/* ── Setup banner ── */
+.setup-banner{background:var(--surface);border:1px solid rgba(34,211,238,.3);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.setup-banner p{font-size:13px;color:var(--text);flex:1;min-width:180px}
+
+/* ── Config bar ── */
+.cfg{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cfg-lbl{font-size:10px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.cfg input[type=text]{background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:5px 9px;font-size:12px;font-family:var(--sans);outline:none;min-width:140px}
+.cfg input[type=text]:focus{border-color:var(--accent)}
+
+/* ── Multi-select team picker ── */
+.team-picker{position:relative;display:inline-block}
+.team-picker-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:5px 28px 5px 9px;font-size:12px;font-family:var(--sans);cursor:pointer;min-width:140px;text-align:left;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-picker-btn::after{content:'▾';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:10px}
+.team-picker-btn.has-selection{border-color:var(--accent);color:var(--accent)}
+.team-dropdown{position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);min-width:220px;max-height:260px;overflow-y:auto;z-index:100;display:none;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.team-dropdown.open{display:block}
+.team-dropdown-header{padding:8px 12px;font-size:10px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.team-dropdown-header a{color:var(--accent);cursor:pointer;font-size:10px}
+.team-option{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s}
+.team-option:last-child{border-bottom:none}
+.team-option:hover{background:var(--surface2)}
+.team-option input{accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;cursor:pointer}
+.team-option label{font-size:12px;cursor:pointer;flex:1}
+.league-group-hdr{padding:6px 12px 3px;font-size:10px;color:var(--accent);font-family:var(--mono);letter-spacing:.05em;background:var(--surface2);position:sticky;top:0}
+
+/* ── Buttons ── */
+.btn{background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);white-space:nowrap}
+.btn:hover{opacity:.85}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.spacer{flex:1}
+
+/* ── Calendar grid ── */
+.cal-wrap{overflow-x:auto;margin-bottom:24px}
+.cal-table{width:100%;border-collapse:collapse;min-width:500px}
+.cal-table th{background:var(--surface);border:1px solid var(--border2);padding:8px 10px;font-size:11px;font-family:var(--mono);font-weight:500;text-align:center;white-space:nowrap;position:sticky;top:0;z-index:10}
+.cal-table th.date-col{text-align:left;min-width:140px;color:var(--muted)}
+.cal-table th.league-col{color:var(--accent);min-width:130px}
+.cal-table td{border:1px solid var(--border);padding:6px 8px;vertical-align:top;background:var(--surface)}
+.cal-table td.date-cell{font-size:12px;font-family:var(--mono);color:var(--muted);white-space:nowrap;vertical-align:middle;background:var(--surface);font-weight:500}
+.cal-table td.date-cell.today{color:var(--accent)}
+.cal-table td.date-cell.past{color:var(--muted);opacity:.6}
+.cal-table td.game-cell{background:var(--surface);min-height:36px}
+.cal-table tr:hover td{background:var(--surface2)}
+.cal-table tr.conflict-row td{background:rgba(251,191,36,.04)}
+
+/* ── Game cell card ── */
+.gcell{border-radius:6px;padding:5px 7px;margin-bottom:4px;border:1px solid var(--border);position:relative;transition:border-color .15s}
+.gcell:last-child{margin-bottom:0}
+.gcell.my-game{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.05)}
+.gcell.my-game::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;border-radius:2px 0 0 2px;background:var(--accent)}
+.gcell.played{opacity:.45}
+.gcell-teams{font-size:11px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:3px}
+.gcell-teams .hl{color:#fff}
+.gcell-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.gcell-time{font-size:10px;font-family:var(--mono);color:var(--muted)}
+.gcell-venue{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+.gcell-played-btn{font-size:9px;font-family:var(--mono);border:none;border-radius:3px;padding:2px 6px;cursor:pointer;transition:all .15s;margin-left:auto;white-space:nowrap}
+.gcell-played-btn.not-played{background:rgba(255,255,255,.06);color:var(--muted)}
+.gcell-played-btn.not-played:hover{background:rgba(74,222,128,.15);color:var(--green)}
+.gcell-played-btn.is-played{background:rgba(74,222,128,.15);color:var(--green)}
+
+/* ── Empty cell ── */
+.empty-cell{color:var(--border2);font-size:11px;text-align:center;padding:8px 0}
+
+/* ── Legend ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:12px;align-items:center}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.conflict-badge{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25);font-size:10px;padding:2px 8px;border-radius:20px;font-family:var(--mono)}
+
+/* ── Summary cards ── */
+.sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
+.sum-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.hg::after{background:var(--green)}.hy::after{background:var(--yellow)}.hr::after{background:var(--red)}
+.sum-league{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
+.sum-team{font-size:10px;font-family:var(--mono);color:var(--accent);margin-bottom:12px}
+.hlabel{position:absolute;top:12px;right:12px;font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:20px}
+.hg .hlabel{color:var(--green);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25)}
+.hy .hlabel{color:var(--yellow);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25)}
+.hr .hlabel{color:var(--red);background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px}
+.sbox{background:var(--surface2);border-radius:6px;padding:7px 4px;text-align:center}
+.snum{font-size:20px;font-weight:500;color:#fff;font-family:var(--mono);line-height:1.1}
+.slbl{font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.03em;margin-top:2px}
+.prog{background:var(--surface2);border-radius:20px;height:5px;overflow:hidden;margin-bottom:6px}
+.prog-fill{height:100%;border-radius:20px;transition:width .5s}
+.prog-txt{font-size:10px;color:var(--muted);font-family:var(--mono)}
+
+/* ── Suggestions ── */
+.sug-hdr{font-size:11px;color:var(--muted);font-family:var(--mono);padding:8px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);margin-bottom:12px}
+.sug-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.sug-icon{font-size:18px;font-weight:500;min-width:24px;font-family:var(--mono);line-height:1.2}
+.c-must{color:var(--red)}.c-risk{color:var(--yellow)}.c-ok{color:var(--green)}
+.sug-why{font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:3px}
+.sug-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;flex-wrap:wrap;gap:8px}
+
+/* ── Misc ── */
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty h3{font-size:15px;color:var(--text);margin:10px 0 5px}
+.loading{display:flex;align-items:center;justify-content:center;padding:50px;gap:10px;color:var(--muted);font-family:var(--mono);font-size:12px}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.section{display:none}.section.active{display:block}
+
+@media(max-width:640px){
+  .tabs{width:100%}.tab{flex:1;text-align:center;padding:6px 4px}
+  .cfg{gap:6px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <h1 class="logo">Cricket <em>Schedule</em></h1>
+    <span class="sync-lbl" id="syncLbl"></span>
+  </div>
+  <p class="tagline">Multi-league tracker &nbsp;·&nbsp; Playoff qualifier</p>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('schedule',this)">Schedule</button>
+    <button class="tab" onclick="showTab('summary',this)">Summary</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Setup banner -->
+  <div class="setup-banner" id="setupBanner" style="display:none">
+    <p>Paste your Google Spreadsheet ID (or full URL) to load schedule data. Sheet must be shared — <em>Anyone with link can view</em>.</p>
+    <input type="text" id="sheetInput" placeholder="Sheet ID or full URL...">
+    <button class="btn" onclick="saveSheet()">Load</button>
+  </div>
+
+  <!-- Config bar -->
+  <div class="cfg" id="cfgBar" style="display:none">
+    <span class="cfg-lbl">SHEET</span>
+    <span id="sheetLbl" style="font-family:var(--mono);font-size:11px;color:var(--accent)"></span>
+    <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="changeSheet()">Change</button>
+    <div class="spacer"></div>
+    <span class="cfg-lbl">MY TEAMS</span>
+    <div class="team-picker" id="teamPickerWrap">
+      <button class="team-picker-btn" id="teamPickerBtn" onclick="toggleTeamPicker(event)">All teams</button>
+      <div class="team-dropdown" id="teamDropdown">
+        <div class="team-dropdown-header">
+          Select your team(s)
+          <a onclick="clearTeams()">Clear all</a>
+        </div>
+        <div style="padding:6px 8px;border-bottom:1px solid var(--border)">
+          <input type="text" id="teamSearch" placeholder="Search teams..." oninput="filterTeamOptions(this.value)"
+            style="width:100%;padding:5px 8px;font-size:12px;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);outline:none">
+        </div>
+        <div id="teamOptionsList"></div>
+      </div>
+    </div>
+    <button class="btn btn-ghost" id="myGamesBtn" onclick="toggleMyGamesOnly()" style="font-size:11px;padding:5px 12px">My games only</button>
+    <button class="btn" onclick="loadData(true)">↻ Refresh</button>
+  </div>
+
+  <!-- SCHEDULE TAB -->
+  <div id="tab-schedule" class="section active">
+    <div class="legend" id="calLegend" style="display:none">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>My game</span>
+      <span class="legend-item"><span style="display:inline-block;width:8px;height:8px;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.4);border-radius:2px"></span>Played</span>
+      <span class="conflict-badge">⚠ conflict</span><span style="font-size:11px">= plays in 2+ leagues same day</span>
+    </div>
+    <div class="cal-wrap" id="calWrap">
+      <div class="loading"><div class="spinner"></div>Loading schedule...</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY TAB -->
+  <div id="tab-summary" class="section">
+    <div id="sumWrap"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+  </div>
+
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let ALL = [];
+let MIN_MAP = {};
+let PLAYED  = JSON.parse(localStorage.getItem('played') || '{}');
+let MY_TEAMS = JSON.parse(localStorage.getItem('myTeams') || '[]'); // array of "LeagueName::TeamName"
+
+const LEAGUE_COLORS = ['#22d3ee','#4ade80','#fbbf24','#f97316','#a78bfa','#fb7185','#34d399'];
+
+const SCHED_COLS   = ['League Name','Sport','Year','Tournament','Match Date','Match Time','Home Team','Away Team','Venue','Match Status','Result','Scraped At'];
+const LEAGUE_COLS  = ['League Name','Sport','Source URL','Source URL Past','Min Games','Status','Last Scraped','Season','Notes'];
+
+// ── Sheet ─────────────────────────────────────────────────────────────────────
+function getSheetId(){ return localStorage.getItem('sheetId')||''; }
+
+function saveSheet(){
+  let v = document.getElementById('sheetInput').value.trim();
+  const m = v.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(m) v=m[1];
+  if(!v) return;
+  localStorage.setItem('sheetId',v);
+  document.getElementById('setupBanner').style.display='none';
+  document.getElementById('cfgBar').style.display='flex';
+  document.getElementById('sheetLbl').textContent=v.slice(0,20)+(v.length>20?'...':'');
+  loadData();
+}
+
+function changeSheet(){
+  localStorage.removeItem('sheetId');
+  document.getElementById('setupBanner').style.display='flex';
+  document.getElementById('cfgBar').style.display='none';
+  ALL=[];
+}
+
+// ── Data loading ──────────────────────────────────────────────────────────────
+// Default min-games — used as fallback if Leagues tab fails to load.
+// Edit these values to match your league settings.
+const DEFAULT_MIN_GAMES = {
+  'WMCL':        2,
+  'VLCCL':       2,
+  'MCLT20':      2,
+  'MCPLeague':   2,
+  'FCPL 2026':   2,
+  'ASCL Spring': 2,
+};
+
+function loadData(force=false){
+  const id=getSheetId(); if(!id) return;
+  const ck='cache_'+id, ct='ctime_'+id;
+  const age=Date.now()-(+localStorage.getItem(ct)||0);
+  if(!force && age<3600000 && localStorage.getItem(ck)){
+    ALL=JSON.parse(localStorage.getItem(ck));
+    MIN_MAP=JSON.parse(localStorage.getItem('minmap_'+id)||'{}');
+    // Apply defaults for any missing leagues
+    Object.entries(DEFAULT_MIN_GAMES).forEach(([k,v])=>{ if(!MIN_MAP[k]) MIN_MAP[k]=v; });
+    document.getElementById('syncLbl').textContent='cached · '+ago(+localStorage.getItem(ct));
+    buildUI(); return;
+  }
+  setLoading();
+
+  // Step 1: Load Schedule tab
+  gvizQuery(id,'Schedule',25000,(rows)=>{
+    ALL=rows.filter(r=>{
+      const ln=r['League Name']||'';
+      const hm=r['Home Team']||'';
+      const md=r['Match Date']||'';
+      if(ln==='League Name'||hm==='Home Team'||md==='Match Date') return false;
+      return ln && md;
+    });
+    console.log('Schedule loaded:',ALL.length,'rows');
+
+    // Step 2: Load Leagues tab AFTER Schedule completes (sequential, not nested)
+    setTimeout(()=>{
+      gvizQuery(id,'Leagues',25000,(lr)=>{
+        if(lr.length>0) console.log('Leagues columns:',Object.keys(lr[0]),'first:',lr[0]);
+        lr.forEach(r=>{
+          const vals=Object.values(r);
+          const n=(r['League Name']||r['league name']||vals[0]||'').trim();
+          const m= r['Min Games']  ||r['min games']  ||r['MinGames']||
+                   r['min_games']  ||r['Minimum Games']||vals[4]||'';
+          if(n && m && n!=='League Name' && !isNaN(+m)) MIN_MAP[n]=+m||0;
+        });
+        console.log('MIN_MAP from sheet:',JSON.stringify(MIN_MAP));
+        finish();
+      }, ()=>{
+        console.warn('Leagues tab timed out — using DEFAULT_MIN_GAMES fallback');
+        finish();
+      });
+    }, 500); // small delay between requests to avoid Google rate limiting
+
+    function finish(){
+      // Apply defaults for any league not found in Leagues tab
+      Object.entries(DEFAULT_MIN_GAMES).forEach(([k,v])=>{ if(!MIN_MAP[k]) MIN_MAP[k]=v; });
+      console.log('Final MIN_MAP:',JSON.stringify(MIN_MAP));
+      localStorage.setItem('minmap_'+id,JSON.stringify(MIN_MAP));
+      localStorage.setItem(ck,JSON.stringify(ALL));
+      localStorage.setItem(ct,Date.now().toString());
+      document.getElementById('syncLbl').textContent='synced · '+ALL.length+' games';
+      buildUI();
+    }
+  },(err)=>showErr(err));
+}
+
+// ── gviz JSONP ────────────────────────────────────────────────────────────────
+// ── gviz data loading — uses published CSV export (works from file://) ─────────
+// Requires: File → Share → Publish to web → each tab as CSV
+// This avoids JSONP script injection which modern browsers block from file://
+
+async function fetchSheetCSV(sheetId, tabName) {
+  // Try published CSV first (requires "Publish to web")
+  const pubUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
+  // Fallback: export URL (works if sheet is shared as viewer)
+  const expUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&sheet=${encodeURIComponent(tabName)}`;
+
+  for (const url of [pubUrl, expUrl]) {
+    try {
+      const resp = await fetch(url, { mode: 'cors' });
+      if (resp.ok) {
+        const text = await resp.text();
+        if (text && !text.includes('<html') && text.length > 10) {
+          return parseCSV(text);
+        }
+      }
+    } catch(e) {
+      console.warn('fetch failed for', url, e.message);
+    }
+  }
+  throw new Error(`Could not load "${tabName}" tab. Make sure the sheet is shared: File → Share → Publish to web → ${tabName} tab → CSV`);
+}
+
+function parseCSV(csv) {
+  const lines = csv.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = (vals[i] || '').trim(); });
+    return obj;
+  });
+}
+
+function parseCSVLine(line) {
+  const result = []; let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (line[i] === ',' && !inQ) {
+      result.push(cur); cur = '';
+    } else cur += line[i];
+  }
+  result.push(cur);
+  return result;
+}
+
+function gvizQuery(sheetId, tabName, timeoutMs, onSuccess, onError) {
+  if (typeof timeoutMs === 'function') { onError = onSuccess; onSuccess = timeoutMs; timeoutMs = 20000; }
+
+  const timer = setTimeout(() => {
+    if (onError) onError('Timeout loading: ' + tabName);
+  }, timeoutMs);
+
+  fetchSheetCSV(sheetId, tabName)
+    .then(rows => {
+      clearTimeout(timer);
+      console.log(tabName, 'loaded via CSV:', rows.length, 'rows, cols:', rows[0] ? Object.keys(rows[0]) : []);
+      onSuccess(rows);
+    })
+    .catch(err => {
+      clearTimeout(timer);
+      if (onError) onError(err.message);
+    });
+}
+
+function buildUI(){
+  buildTeamPicker();
+  // Restore my-games-only button state
+  const btn = document.getElementById('myGamesBtn');
+  if (btn && MY_GAMES_ONLY) {
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'var(--accent)';
+    btn.textContent = '✓ My games only';
+  }
+  renderCalendar();
+  renderSummary();
+
+}
+
+// ── Team picker (multi-select, grouped by league) ─────────────────────────────
+function buildTeamPicker(){
+  const leagues=uniqLeagues();
+  const list=document.getElementById('teamOptionsList');
+  list.innerHTML='';
+  leagues.forEach(league=>{
+    const hdr=document.createElement('div');
+    hdr.className='league-group-hdr'; hdr.textContent=league;
+    list.appendChild(hdr);
+    const teams=uniq([
+      ...ALL.filter(g=>g['League Name']===league).map(g=>g['Home Team']),
+      ...ALL.filter(g=>g['League Name']===league).map(g=>g['Away Team'])
+    ]).filter(Boolean).sort();
+    teams.forEach(team=>{
+      const key=league+'::'+team;
+      const div=document.createElement('div'); div.className='team-option';
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.id='to_'+btoa(key).slice(0,12);
+      cb.checked=MY_TEAMS.includes(key);
+      cb.onchange=()=>{ toggleMyTeam(key,cb.checked); };
+      const lbl=document.createElement('label'); lbl.htmlFor=cb.id; lbl.textContent=team;
+      div.appendChild(cb); div.appendChild(lbl);
+      list.appendChild(div);
+    });
+  });
+  updatePickerBtn();
+}
+
+let MY_GAMES_ONLY = localStorage.getItem('myGamesOnly') === '1';
+
+function filterTeamOptions(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('#teamOptionsList .team-option').forEach(div => {
+    const lbl = div.querySelector('label');
+    div.style.display = (!q || (lbl && lbl.textContent.toLowerCase().includes(q))) ? '' : 'none';
+  });
+  document.querySelectorAll('#teamOptionsList .league-group-hdr').forEach(hdr => {
+    // Show header if any option below it is visible
+    let next = hdr.nextElementSibling;
+    let anyVisible = false;
+    while (next && !next.classList.contains('league-group-hdr')) {
+      if (next.style.display !== 'none') anyVisible = true;
+      next = next.nextElementSibling;
+    }
+    hdr.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+function toggleMyGamesOnly() {
+  MY_GAMES_ONLY = !MY_GAMES_ONLY;
+  localStorage.setItem('myGamesOnly', MY_GAMES_ONLY ? '1' : '0');
+  const btn = document.getElementById('myGamesBtn');
+  if (btn) {
+    btn.style.borderColor = MY_GAMES_ONLY ? 'var(--accent)' : '';
+    btn.style.color = MY_GAMES_ONLY ? 'var(--accent)' : '';
+    btn.textContent = MY_GAMES_ONLY ? '✓ My games only' : 'My games only';
+  }
+  renderCalendar();
+}
+
+function toggleMyTeam(key,add){
+  if(add){ if(!MY_TEAMS.includes(key)) MY_TEAMS.push(key); }
+  else MY_TEAMS=MY_TEAMS.filter(k=>k!==key);
+  localStorage.setItem('myTeams',JSON.stringify(MY_TEAMS));
+  updatePickerBtn();
+  renderCalendar(); renderSummary();
+}
+
+function clearTeams(){
+  MY_TEAMS=[];
+  localStorage.setItem('myTeams',JSON.stringify(MY_TEAMS));
+  document.querySelectorAll('#teamOptionsList input[type=checkbox]').forEach(cb=>cb.checked=false);
+  updatePickerBtn();
+  renderCalendar(); renderSummary();
+}
+
+function updatePickerBtn(){
+  const btn=document.getElementById('teamPickerBtn');
+  if(MY_TEAMS.length===0){ btn.textContent='All teams'; btn.classList.remove('has-selection'); }
+  else if(MY_TEAMS.length===1){ btn.textContent=MY_TEAMS[0].split('::')[1]; btn.classList.add('has-selection'); }
+  else{ btn.textContent=MY_TEAMS.length+' teams selected'; btn.classList.add('has-selection'); }
+}
+
+function toggleTeamPicker(e){
+  e.stopPropagation();
+  document.getElementById('teamDropdown').classList.toggle('open');
+}
+// Close dropdown only when clicking OUTSIDE the picker wrapper
+document.addEventListener('click',(e)=>{
+  const wrap=document.getElementById('teamPickerWrap');
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById('teamDropdown').classList.remove('open');
+  }
+});
+
+// ── My-team helpers ───────────────────────────────────────────────────────────
+function isMyTeam(leagueName,teamName){
+  if(MY_TEAMS.length===0) return false;
+  return MY_TEAMS.some(k=>k===leagueName+'::'+teamName);
+}
+function myTeamsForLeague(league){
+  return MY_TEAMS.filter(k=>k.startsWith(league+'::')).map(k=>k.split('::')[1]);
+}
+
+// ── Calendar grid render ──────────────────────────────────────────────────────
+function renderCalendar(){
+  const wrap=document.getElementById('calWrap');
+  if(!ALL.length){ wrap.innerHTML=emptyHTML('🏏','No games','Sheet loaded but no game rows found.'); return; }
+
+  const today=todayStr();
+  const leagues=uniqLeagues();
+  const leagueColors={};
+  leagues.forEach((l,i)=>leagueColors[l]=LEAGUE_COLORS[i%LEAGUE_COLORS.length]);
+
+  // Group games by date
+  const byDate={};
+  ALL.forEach(g=>{ (byDate[g['Match Date']]=byDate[g['Match Date']]||[]).push(g); });
+  const dates=Object.keys(byDate).sort();
+
+  // Show legend
+  document.getElementById('calLegend').style.display=MY_TEAMS.length>0?'flex':'none';
+
+  let html=`<table class="cal-table"><thead><tr>
+    <th class="date-col">Date</th>`;
+  leagues.forEach(l=>{
+    html+=`<th class="league-col" style="color:${leagueColors[l]}">${l}</th>`;
+  });
+  html+=`</tr></thead><tbody>`;
+
+  dates.forEach(d=>{
+    const dayGames=byDate[d];
+
+    // When "my games only" + teams selected, skip dates where I have no games
+    if(MY_GAMES_ONLY && MY_TEAMS.length>0){
+      const hasMyGame=dayGames.some(g=>isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']));
+      if(!hasMyGame) return;
+    }
+
+    const isToday=d===today, isPast=d<today;
+
+    // Check conflict: any of my teams plays in 2+ leagues this day
+    const myLeaguesThisDay=new Set();
+    if(MY_TEAMS.length>0){
+      dayGames.forEach(g=>{
+        if(isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']))
+          myLeaguesThisDay.add(g['League Name']);
+      });
+    }
+    const hasConflict=myLeaguesThisDay.size>1;
+
+    html+=`<tr class="${hasConflict?'conflict-row':''}">`;
+    html+=`<td class="date-cell ${isToday?'today':isPast?'past':''}">`;
+    if(hasConflict) html+=`<span class="conflict-badge" title="You have games in multiple leagues today">⚠</span> `;
+    html+=fmtDateShort(d,isToday);
+    html+=`</td>`;
+
+    leagues.forEach(league=>{
+      let games=dayGames.filter(g=>g['League Name']===league).sort((a,b)=>(a['Match Time']||'').localeCompare(b['Match Time']||''));
+      // When "my games only" is on and teams are selected, filter to only my games
+      if(MY_GAMES_ONLY && MY_TEAMS.length>0){
+        games=games.filter(g=>isMyTeam(league,g['Home Team'])||isMyTeam(league,g['Away Team']));
+      }
+      html+=`<td class="game-cell">`;
+      if(games.length===0){
+        html+=`<div class="empty-cell">–</div>`;
+      } else {
+        games.forEach(g=>{
+          const k=gkey(g);
+          const isDone=!!PLAYED[k];
+          const myGame=isMyTeam(league,g['Home Team'])||isMyTeam(league,g['Away Team']);
+          const home=g['Home Team']||'TBD', away=g['Away Team']||'TBD';
+          const homeHL=isMyTeam(league,home), awayHL=isMyTeam(league,away);
+          html+=`<div class="gcell ${myGame?'my-game':''} ${isDone?'played':''}" id="gc-${k}">
+            <div class="gcell-teams">
+              <span class="${homeHL?'hl':''}">${home}</span>
+              <span style="color:var(--muted);font-size:9px"> vs </span>
+              <span class="${awayHL?'hl':''}">${away}</span>
+            </div>
+            <div class="gcell-meta">
+              ${g['Match Time']?`<span class="gcell-time">${g['Match Time']}</span>`:''}
+              ${g['Venue']?`<span class="gcell-venue">${g['Venue']}</span>`:''}
+              <button class="gcell-played-btn ${isDone?'is-played':'not-played'}"
+                onclick="togglePlayed('${k}','gc-${k}',this)">
+                ${isDone?'✓ played':'mark played'}
+              </button>
+            </div>
+          </div>`;
+        });
+      }
+      html+=`</td>`;
+    });
+    html+=`</tr>`;
+  });
+
+  html+=`</tbody></table>`;
+  wrap.innerHTML=html;
+}
+
+function togglePlayed(k,cardId,btn){
+  const isDone=!!PLAYED[k];
+  if(isDone){ delete PLAYED[k]; }
+  else{ PLAYED[k]=true; }
+  localStorage.setItem('played',JSON.stringify(PLAYED));
+  const card=document.getElementById(cardId);
+  if(card){ card.classList.toggle('played',!isDone); }
+  if(btn){ btn.className='gcell-played-btn '+(isDone?'not-played':'is-played'); btn.textContent=isDone?'mark played':'✓ played'; }
+  renderSummary();
+}
+
+// ── Summary render ────────────────────────────────────────────────────────────
+function renderSummary(){
+  const el=document.getElementById('sumWrap');
+  const leagues=uniqLeagues();
+  if(!leagues.length){ el.innerHTML=emptyHTML('📊','No data',''); return; }
+  const today=todayStr();
+  let html='<div class="sum-grid">';
+
+  leagues.forEach(league=>{
+    const myTeams=myTeamsForLeague(league);
+    const lg=ALL.filter(g=>g['League Name']===league);
+    // my games = filtered to selected team(s), or all league games if no team selected
+    const my=myTeams.length>0
+      ? lg.filter(g=>myTeams.includes(g['Home Team'])||myTeams.includes(g['Away Team']))
+      : lg;
+
+    const total    = my.length;
+    const played_n = my.filter(g=>PLAYED[gkey(g)]).length;
+    // Completed = past games (match date < today) regardless of user toggle
+    const completed= my.filter(g=>g['Match Date'] && g['Match Date']<today).length;
+    // Pending = future games not yet played
+    const pending  = my.filter(g=>g['Match Date'] && g['Match Date']>=today && !PLAYED[gkey(g)]).length;
+
+    const minN  = MIN_MAP[league]||0;
+    const need  = Math.max(0, minN - played_n);
+    const upcoming = pending; // alias for clarity in progress text
+
+    // Health logic
+    let cls='hg', lbl='On track';
+    if(minN>0){
+      if(played_n>=minN)    { cls='hg'; lbl='Qualified ✓'; }
+      else if(pending>=need){ cls='hy'; lbl='At risk'; }
+      else                  { cls='hr'; lbl='Will miss'; }
+    } else {
+      cls='hg'; lbl='Tracking';
+    }
+
+    const fc   = cls==='hg'?'var(--green)':cls==='hy'?'var(--yellow)':'var(--red)';
+    const pp   = minN>0 ? Math.min(100,Math.round(played_n/minN*100))
+               : total>0 ? Math.min(100,Math.round(played_n/total*100)) : 0;
+    const needColor = need>0?'var(--yellow)':'var(--green)';
+    const teamLbl   = myTeams.length>0 ? myTeams.join(', ') : 'all teams';
+
+    html+=`<div class="sum-card ${cls}">
+      <div class="sum-league">${league}</div>
+      <div class="sum-team">${teamLbl}</div>
+      <span class="hlabel">${lbl}</span>
+
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
+        <div class="sbox"><div class="snum">${total}</div><div class="slbl">Total</div></div>
+        <div class="sbox"><div class="snum">${completed}</div><div class="slbl">Completed</div></div>
+        <div class="sbox"><div class="snum">${pending}</div><div class="slbl">Pending</div></div>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin-bottom:10px"></div>
+
+      <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Playoff qualification</div>
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
+        <div class="sbox"><div class="snum">${played_n}</div><div class="slbl">Played</div></div>
+        <div class="sbox"><div class="snum">${minN||'—'}</div><div class="slbl">Min needed</div></div>
+        <div class="sbox"><div class="snum" style="color:${needColor}">${need>0?need:'✓'}</div><div class="slbl">Still need</div></div>
+      </div>
+
+      <div class="prog"><div class="prog-fill" style="width:${pp}%;background:${fc}"></div></div>
+      <div class="prog-txt">${played_n} of ${minN||total} played · ${upcoming} upcoming</div>
+    </div>`;
+  });
+
+  el.innerHTML=html+'</div>';
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function gkey(g){ return btoa(unescape(encodeURIComponent([g['League Name'],g['Match Date'],g['Home Team'],g['Away Team']].join('|')))).replace(/[=+/]/g,'_'); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function uniq(arr){ return [...new Set(arr)]; }
+function uniqLeagues(){
+  return uniq(ALL.map(g=>g['League Name']))
+    .filter(l=>l && l!=='League Name' && l!=='league name')
+    .sort();
+}
+function ago(ts){ const m=Math.floor((Date.now()-ts)/60000); return m<1?'just now':m<60?m+'m ago':Math.floor(m/60)+'h ago'; }
+function fmtDateShort(d,isToday){
+  if(!d) return '';
+  try{
+    const dt=new Date(d+'T12:00:00');
+    const s=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    return isToday?'TODAY · '+s:s;
+  }catch(e){return d;}
+}
+function emptyHTML(icon,h,p){
+  return `<div class="empty"><div style="font-size:32px;margin-bottom:10px;opacity:.5">${icon}</div><h3>${h}</h3>${p?`<p style="font-size:12px;margin-top:5px">${p}</p>`:''}</div>`;
+}
+function setLoading(){
+  document.getElementById('calWrap').innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';
+  document.getElementById('sumWrap').innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';
+}
+function showErr(msg){
+  const h=`<div class="empty"><h3>Could not load</h3><p style="font-family:var(--mono);font-size:11px;color:var(--red);margin-top:8px">${msg}</p><button class="btn" style="margin-top:12px" onclick="loadData(true)">Retry</button></div>`;
+  document.getElementById('calWrap').innerHTML=h;
+}
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+(function(){
+  const id=getSheetId();
+  if(!id){
+    document.getElementById('setupBanner').style.display='flex';
+    setLoading();
+    ['calWrap','sumWrap'].forEach(x=>document.getElementById(x).innerHTML=emptyHTML('↑','Enter your Sheet ID','Paste your Google Spreadsheet ID above to get started.'));
+  } else {
+    document.getElementById('cfgBar').style.display='flex';
+    document.getElementById('sheetLbl').textContent=id.slice(0,20)+(id.length>20?'...':'');
+    loadData();
+  }
+})();
+</script>
+</body>
+</html>
