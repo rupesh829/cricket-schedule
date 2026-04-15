@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="46" fill="#b91c1c"/>
+  <circle cx="50" cy="50" r="46" fill="none" stroke="#991b1b" stroke-width="2"/>
+  <!-- vertical seam -->
+  <path d="M50 4 C65 18,72 35,72 50 C72 65,65 82,50 96 C35 82,28 65,28 50 C28 35,35 18,50 4 Z"
+        fill="none" stroke="#fca5a5" stroke-width="2.2"/>
+  <!-- horizontal seam -->
+  <path d="M4 50 C18 35,35 28,50 28 C65 28,82 35,96 50 C82 65,65 72,50 72 C35 72,18 65,4 50 Z"
+        fill="none" stroke="#fca5a5" stroke-width="2.2"/>
+</svg>

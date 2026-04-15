@@ -1,0 +1,19 @@
+{
+  "name": "Cricket Schedule",
+  "short_name": "Cricket",
+  "description": "Multi-league cricket schedule tracker & playoff qualifier",
+  "start_url": "./cricket_schedule.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0c0f",
+  "theme_color": "#0a0c0f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
