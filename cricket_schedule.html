@@ -2,409 +2,195 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Cricket Schedule</title>
-<script>(function(){var m={name:"Cricket Schedule",short_name:"Cricket",start_url:"./cricket_schedule.html",display:"standalone",background_color:"#0a0c0f",theme_color:"#0a0c0f",icons:[{src:"icon.svg",sizes:"any",type:"image/svg+xml",purpose:"any maskable"}]};var b=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});var l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(b);document.head.appendChild(l);})();</script>
-<meta name="theme-color" content="#0a0c0f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cricket">
-<link rel="apple-touch-icon" href="icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0c0f;--surface:#111418;--surface2:#181c22;--surface3:#1e2329;
+  --bg:#0a0c0f;--surface:#111418;--surface2:#181c22;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
   --text:#e2e8f0;--muted:#64748b;
-  --accent:#22d3ee;--green:#4ade80;--yellow:#fbbf24;--red:#f87171;--orange:#f97316;
+  --accent:#22d3ee;--green:#4ade80;--yellow:#fbbf24;--red:#f87171;
   --radius:10px;
   --mono:'DM Mono',monospace;--serif:'Instrument Serif',serif;--sans:'DM Sans',sans-serif;
-  --nav-h:56px;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100%;font-size:14px;line-height:1.5;
-  padding-bottom:env(safe-area-inset-bottom)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;font-size:14px;line-height:1.5}
 
 /* ── Header ── */
-.hdr{padding:16px 16px 0;max-width:900px;margin:0 auto}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.logo{font-family:var(--serif);font-size:22px;color:#fff;line-height:1}
+.hdr{padding:22px 20px 0;max-width:1200px;margin:0 auto}
+.hdr-top{display:flex;align-items:baseline;justify-content:space-between}
+.logo{font-family:var(--serif);font-size:26px;color:#fff}
 .logo em{color:var(--accent);font-style:italic}
-.hdr-right{display:flex;align-items:center;gap:8px}
-.sync-lbl{font-family:var(--mono);font-size:10px;color:var(--muted)}
-.icon-btn{background:none;border:1px solid var(--border2);color:var(--muted);width:32px;height:32px;
-  border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
-.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
-.tagline{font-size:11px;color:var(--muted);margin:3px 0 12px}
-.profile-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);
-  border:1px solid var(--border2);border-radius:20px;padding:3px 10px 3px 8px;font-size:11px;
-  font-family:var(--mono);color:var(--accent);cursor:pointer;margin-bottom:10px}
-.profile-chip:hover{border-color:var(--accent)}
-.profile-dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.sync-lbl{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.tagline{font-size:12px;color:var(--muted);margin:2px 0 16px}
 
-/* ── Desktop top nav ── */
-.top-nav{max-width:900px;margin:0 auto;padding:0 16px;margin-bottom:12px}
-.tabs{display:flex;gap:2px;background:var(--surface);border-radius:var(--radius);padding:3px;width:fit-content}
-.tab{padding:6px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;
-  color:var(--muted);border:none;background:none;transition:all .2s}
+/* ── Tabs ── */
+.tabs-wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.tabs{display:flex;gap:2px;background:var(--surface);border-radius:var(--radius);padding:3px;width:fit-content;margin-bottom:16px}
+.tab{padding:6px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);border:none;background:none;transition:all .2s}
 .tab.active{background:var(--accent);color:#000}
 
-/* ── Bottom mobile nav ── */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;
-  background:rgba(17,20,24,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-top:1px solid var(--border2);padding:6px 0 max(6px, env(safe-area-inset-bottom));
-  z-index:200;height:var(--nav-h)}
-.bottom-nav-inner{display:flex;justify-content:space-around;align-items:center;max-width:480px;margin:0 auto}
-.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;
-  color:var(--muted);font-size:9px;font-family:var(--mono);cursor:pointer;padding:4px 12px;
-  border-radius:8px;transition:color .15s;min-width:60px}
-.bnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.bnav-btn.active{color:var(--accent)}
-
-/* ── Main container ── */
-.main{max-width:900px;margin:0 auto;padding:0 16px 72px}
-
-/* ── Config bar ── */
-.cfg{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.cfg-lbl{font-size:10px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
-.cfg input[type=text]{background:var(--surface2);border:1px solid var(--border2);color:var(--text);
-  border-radius:6px;padding:5px 9px;font-size:12px;font-family:var(--sans);outline:none;min-width:130px}
-.cfg input[type=text]:focus{border-color:var(--accent)}
+.main{max-width:1200px;margin:0 auto;padding:0 20px 60px}
 
 /* ── Setup banner ── */
-.setup-banner{background:var(--surface);border:1px solid rgba(34,211,238,.3);border-radius:var(--radius);
-  padding:16px;margin-bottom:12px}
-.setup-banner h3{font-size:14px;color:#fff;margin-bottom:6px}
-.setup-banner p{font-size:12px;color:var(--muted);margin-bottom:10px}
-.setup-row{display:flex;gap:8px;flex-wrap:wrap}
-.setup-row input{flex:1;min-width:200px;background:var(--surface2);border:1px solid var(--border2);
-  color:var(--text);border-radius:6px;padding:7px 10px;font-size:13px;outline:none}
-.setup-row input:focus{border-color:var(--accent)}
+.setup-banner{background:var(--surface);border:1px solid rgba(34,211,238,.3);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.setup-banner p{font-size:13px;color:var(--text);flex:1;min-width:180px}
 
-/* ── Team picker ── */
+/* ── Config bar ── */
+.cfg{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cfg-lbl{font-size:10px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.cfg input[type=text]{background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:5px 9px;font-size:12px;font-family:var(--sans);outline:none;min-width:140px}
+.cfg input[type=text]:focus{border-color:var(--accent)}
+
+/* ── Multi-select team picker ── */
 .team-picker{position:relative;display:inline-block}
-.team-picker-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);
-  border-radius:6px;padding:5px 28px 5px 9px;font-size:12px;font-family:var(--sans);cursor:pointer;
-  min-width:130px;text-align:left;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.team-picker-btn::after{content:'▾';position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  color:var(--muted);font-size:10px}
+.team-picker-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:5px 28px 5px 9px;font-size:12px;font-family:var(--sans);cursor:pointer;min-width:140px;text-align:left;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-picker-btn::after{content:'▾';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:10px}
 .team-picker-btn.has-selection{border-color:var(--accent);color:var(--accent)}
-.team-dropdown{position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);
-  border:1px solid var(--border2);border-radius:var(--radius);min-width:230px;max-height:280px;
-  overflow-y:auto;z-index:300;display:none;box-shadow:0 8px 24px rgba(0,0,0,.6)}
+.team-dropdown{position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);min-width:220px;max-height:260px;overflow-y:auto;z-index:100;display:none;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .team-dropdown.open{display:block}
-.team-dropdown-header{padding:8px 12px;font-size:10px;color:var(--muted);font-family:var(--mono);
-  border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.team-dropdown-header{padding:8px 12px;font-size:10px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .team-dropdown-header a{color:var(--accent);cursor:pointer;font-size:10px}
-.team-option{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;
-  border-bottom:1px solid var(--border);transition:background .1s}
+.team-option{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s}
 .team-option:last-child{border-bottom:none}
 .team-option:hover{background:var(--surface2)}
 .team-option input{accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;cursor:pointer}
 .team-option label{font-size:12px;cursor:pointer;flex:1}
-.league-group-hdr{padding:5px 12px 3px;font-size:10px;color:var(--accent);font-family:var(--mono);
-  letter-spacing:.05em;background:var(--surface2);position:sticky;top:0}
+.league-group-hdr{padding:6px 12px 3px;font-size:10px;color:var(--accent);font-family:var(--mono);letter-spacing:.05em;background:var(--surface2);position:sticky;top:0}
 
 /* ── Buttons ── */
-.btn{background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:6px;
-  font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);white-space:nowrap}
+.btn{background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);white-space:nowrap}
 .btn:hover{opacity:.85}
-.btn:active{opacity:.7}
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--muted)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.btn-danger{background:transparent;border:1px solid rgba(248,113,113,.3);color:var(--red)}
 .spacer{flex:1}
-
-/* ── View toggle (calendar / list) ── */
-.view-toggle{display:flex;gap:2px;background:var(--surface2);border-radius:6px;padding:2px}
-.vt-btn{background:none;border:none;color:var(--muted);padding:4px 10px;border-radius:5px;
-  font-size:11px;cursor:pointer;font-family:var(--mono)}
-.vt-btn.active{background:var(--surface3);color:var(--text)}
 
 /* ── Calendar grid ── */
 .cal-wrap{overflow-x:auto;margin-bottom:24px}
-.cal-table{width:100%;border-collapse:collapse;min-width:480px}
-.cal-table th{background:var(--surface);border:1px solid var(--border2);padding:8px 10px;
-  font-size:11px;font-family:var(--mono);font-weight:500;text-align:center;white-space:nowrap;
-  position:sticky;top:0;z-index:10}
-.cal-table th.date-col{text-align:left;min-width:130px;color:var(--muted)}
-.cal-table th.league-col{color:var(--accent);min-width:120px}
+.cal-table{width:100%;border-collapse:collapse;min-width:500px}
+.cal-table th{background:var(--surface);border:1px solid var(--border2);padding:8px 10px;font-size:11px;font-family:var(--mono);font-weight:500;text-align:center;white-space:nowrap;position:sticky;top:0;z-index:10}
+.cal-table th.date-col{text-align:left;min-width:140px;color:var(--muted)}
+.cal-table th.league-col{color:var(--accent);min-width:130px}
 .cal-table td{border:1px solid var(--border);padding:6px 8px;vertical-align:top;background:var(--surface)}
-.cal-table td.date-cell{font-size:12px;font-family:var(--mono);color:var(--muted);white-space:nowrap;
-  vertical-align:middle;background:var(--surface);font-weight:500}
+.cal-table td.date-cell{font-size:12px;font-family:var(--mono);color:var(--muted);white-space:nowrap;vertical-align:middle;background:var(--surface);font-weight:500}
 .cal-table td.date-cell.today{color:var(--accent)}
-.cal-table td.date-cell.past{color:var(--muted);opacity:.55}
-.cal-table td.game-cell{background:var(--surface);min-height:34px}
+.cal-table td.date-cell.past{color:var(--muted);opacity:.6}
+.cal-table td.game-cell{background:var(--surface);min-height:36px}
 .cal-table tr:hover td{background:var(--surface2)}
 .cal-table tr.conflict-row td{background:rgba(251,191,36,.04)}
 
-/* ── List view ── */
-.list-section{margin-bottom:24px}
-.list-date-hdr{font-size:11px;font-family:var(--mono);color:var(--muted);padding:6px 0 5px;
-  border-bottom:1px solid var(--border);margin-bottom:6px;display:flex;align-items:center;gap:8px}
-.list-date-hdr.today-hdr{color:var(--accent)}
-.list-date-hdr.past-hdr{opacity:.55}
-.today-badge{background:var(--accent);color:#000;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600}
-.list-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px 12px;margin-bottom:6px;position:relative;transition:border-color .15s}
-.list-card.my-game{border-color:rgba(34,211,238,.35)}
-.list-card.my-game::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  border-radius:3px 0 0 3px;background:var(--accent)}
-.list-card.played-card{opacity:.45}
-.list-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
-.list-teams{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
-.list-teams .hl{color:#fff}
-.list-teams .vs{color:var(--muted);font-size:11px;font-weight:400;margin:0 4px}
-.list-league-tag{font-size:9px;font-family:var(--mono);padding:2px 7px;border-radius:10px;
-  white-space:nowrap;flex-shrink:0;margin-top:2px}
-.list-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.list-time{font-size:11px;font-family:var(--mono);color:var(--muted)}
-.list-venue{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
-.list-result{font-size:11px;color:var(--green)}
-.played-btn{font-size:10px;font-family:var(--mono);border:none;border-radius:5px;padding:4px 10px;
-  cursor:pointer;transition:all .15s;margin-left:auto;white-space:nowrap;flex-shrink:0}
-.played-btn.not-played{background:rgba(255,255,255,.06);color:var(--muted)}
-.played-btn.not-played:hover{background:rgba(74,222,128,.15);color:var(--green)}
-.played-btn.is-played{background:rgba(74,222,128,.15);color:var(--green)}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);flex-shrink:0;
-  title:'Pending sync'}
-.sync-dot.synced{background:var(--green)}
-
-/* ── Game cell (calendar) ── */
-.gcell{border-radius:6px;padding:5px 7px;margin-bottom:4px;border:1px solid var(--border);
-  position:relative;transition:border-color .15s}
+/* ── Game cell card ── */
+.gcell{border-radius:6px;padding:5px 7px;margin-bottom:4px;border:1px solid var(--border);position:relative;transition:border-color .15s}
 .gcell:last-child{margin-bottom:0}
-.gcell.my-game{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.04)}
-.gcell.my-game::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
-  border-radius:2px 0 0 2px;background:var(--accent)}
+.gcell.my-game{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.05)}
+.gcell.my-game::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;border-radius:2px 0 0 2px;background:var(--accent)}
 .gcell.played{opacity:.45}
 .gcell-teams{font-size:11px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:3px}
 .gcell-teams .hl{color:#fff}
 .gcell-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .gcell-time{font-size:10px;font-family:var(--mono);color:var(--muted)}
-.gcell-venue{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap;max-width:110px}
-.gcell-played-btn{font-size:9px;font-family:var(--mono);border:none;border-radius:3px;
-  padding:2px 6px;cursor:pointer;transition:all .15s;margin-left:auto;white-space:nowrap}
+.gcell-venue{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+.gcell-played-btn{font-size:9px;font-family:var(--mono);border:none;border-radius:3px;padding:2px 6px;cursor:pointer;transition:all .15s;margin-left:auto;white-space:nowrap}
 .gcell-played-btn.not-played{background:rgba(255,255,255,.06);color:var(--muted)}
 .gcell-played-btn.not-played:hover{background:rgba(74,222,128,.15);color:var(--green)}
 .gcell-played-btn.is-played{background:rgba(74,222,128,.15);color:var(--green)}
+
+/* ── Empty cell ── */
 .empty-cell{color:var(--border2);font-size:11px;text-align:center;padding:8px 0}
-.conflict-badge{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25);
-  font-size:10px;padding:2px 8px;border-radius:20px;font-family:var(--mono)}
 
 /* ── Legend ── */
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:10px;align-items:center}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:12px;align-items:center}
 .legend-item{display:flex;align-items:center;gap:5px}
 .legend-dot{width:8px;height:8px;border-radius:50%}
+.conflict-badge{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25);font-size:10px;padding:2px 8px;border-radius:20px;font-family:var(--mono)}
 
 /* ── Summary cards ── */
-.sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:16px;position:relative;overflow:hidden}
+.sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
 .sum-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
 .hg::after{background:var(--green)}.hy::after{background:var(--yellow)}.hr::after{background:var(--red)}
 .sum-league{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
 .sum-team{font-size:10px;font-family:var(--mono);color:var(--accent);margin-bottom:12px}
-.hlabel{position:absolute;top:12px;right:12px;font-size:10px;font-family:var(--mono);
-  padding:2px 8px;border-radius:20px}
+.hlabel{position:absolute;top:12px;right:12px;font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:20px}
 .hg .hlabel{color:var(--green);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25)}
 .hy .hlabel{color:var(--yellow);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25)}
 .hr .hlabel{color:var(--red);background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25)}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:10px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px}
 .sbox{background:var(--surface2);border-radius:6px;padding:7px 4px;text-align:center}
 .snum{font-size:20px;font-weight:500;color:#fff;font-family:var(--mono);line-height:1.1}
-.slbl{font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;
-  letter-spacing:.03em;margin-top:2px}
+.slbl{font-size:9px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.03em;margin-top:2px}
 .prog{background:var(--surface2);border-radius:20px;height:5px;overflow:hidden;margin-bottom:6px}
 .prog-fill{height:100%;border-radius:20px;transition:width .5s}
 .prog-txt{font-size:10px;color:var(--muted);font-family:var(--mono)}
 
-/* ── Leagues tab ── */
-.leagues-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:20px}
-.league-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-.league-card-name{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
-.league-card-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
-.status-badge{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:10px;display:inline-block}
-.status-approved{color:var(--green);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25)}
-.status-requested{color:var(--yellow);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25)}
-.status-other{color:var(--muted);background:var(--surface2);border:1px solid var(--border2)}
-
-.request-form{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px;margin-bottom:16px}
-.request-form h3{font-size:13px;color:#fff;margin-bottom:12px}
-.form-row{margin-bottom:10px}
-.form-lbl{font-size:10px;font-family:var(--mono);color:var(--muted);margin-bottom:4px;display:block}
-.form-inp{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);
-  border-radius:6px;padding:7px 10px;font-size:13px;font-family:var(--sans);outline:none}
-.form-inp:focus{border-color:var(--accent)}
-.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form-note{font-size:11px;color:var(--muted);margin-top:8px}
-.form-success{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);
-  border-radius:8px;padding:10px 14px;font-size:12px;color:var(--green);margin-top:8px;display:none}
-
-/* ── Settings modal ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;
-  display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px;
-  width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
-.modal-hdr{display:flex;align-items:center;justify-content:space-between;
-  padding:16px 16px 12px;border-bottom:1px solid var(--border)}
-.modal-hdr h2{font-size:15px;color:#fff}
-.modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
-.modal-body{padding:16px}
-.setting-row{margin-bottom:14px}
-.setting-lbl{font-size:10px;font-family:var(--mono);color:var(--muted);margin-bottom:5px;display:block}
-.setting-desc{font-size:11px;color:var(--muted);margin-top:4px}
-.setting-inp{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);
-  border-radius:6px;padding:7px 10px;font-size:13px;font-family:var(--sans);outline:none}
-.setting-inp:focus{border-color:var(--accent)}
-.modal-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
-
-/* ── Profile modal ── */
-.profile-list{margin-bottom:12px}
-.profile-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;
-  cursor:pointer;transition:background .1s}
-.profile-item:hover{background:var(--surface2)}
-.profile-item.active-profile{background:rgba(34,211,238,.08)}
-.profile-item-name{font-size:13px;color:var(--text);flex:1}
-.profile-item-badge{font-size:9px;font-family:var(--mono);color:var(--accent);
-  background:rgba(34,211,238,.1);padding:2px 7px;border-radius:10px}
-.profile-add{display:flex;gap:8px;margin-top:10px}
-.profile-add input{flex:1;background:var(--surface2);border:1px solid var(--border2);
-  color:var(--text);border-radius:6px;padding:7px 10px;font-size:13px;outline:none}
-.profile-add input:focus{border-color:var(--accent)}
-
-/* ── Install banner ── */
-.install-banner{background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(34,211,238,.05));
-  border:1px solid rgba(34,211,238,.25);border-radius:var(--radius);padding:12px 14px;
-  margin-bottom:12px;display:flex;align-items:center;gap:12px;display:none}
-.install-banner p{font-size:12px;color:var(--text);flex:1}
-
-/* ── Sync status bar ── */
-.sync-bar{font-size:10px;font-family:var(--mono);color:var(--muted);padding:4px 0;
-  margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.sync-bar .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.dot-green{background:var(--green)}.dot-yellow{background:var(--yellow)}.dot-red{background:var(--red)}
+/* ── Suggestions ── */
+.sug-hdr{font-size:11px;color:var(--muted);font-family:var(--mono);padding:8px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border);margin-bottom:12px}
+.sug-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.sug-icon{font-size:18px;font-weight:500;min-width:24px;font-family:var(--mono);line-height:1.2}
+.c-must{color:var(--red)}.c-risk{color:var(--yellow)}.c-ok{color:var(--green)}
+.sug-why{font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:3px}
+.sug-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;flex-wrap:wrap;gap:8px}
 
 /* ── Misc ── */
-.section{display:none}.section.active{display:block}
 .empty{text-align:center;padding:50px 20px;color:var(--muted)}
 .empty h3{font-size:15px;color:var(--text);margin:10px 0 5px}
-.loading{display:flex;align-items:center;justify-content:center;padding:50px;gap:10px;
-  color:var(--muted);font-family:var(--mono);font-size:12px}
-.spinner{width:16px;height:16px;border:2px solid var(--border2);
-  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.loading{display:flex;align-items:center;justify-content:center;padding:50px;gap:10px;color:var(--muted);font-family:var(--mono);font-size:12px}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.divider{height:1px;background:var(--border);margin:12px 0}
+.section{display:none}.section.active{display:block}
 
-/* ── Responsive ── */
 @media(max-width:640px){
-  .top-nav{display:none}
-  .bottom-nav{display:block}
-  .main{padding:0 12px calc(var(--nav-h) + 8px + env(safe-area-inset-bottom))}
-  .sum-grid{grid-template-columns:1fr}
-  .form-row-2{grid-template-columns:1fr}
-  .leagues-grid{grid-template-columns:1fr}
-  .cal-wrap{margin-left:-12px;margin-right:-12px;border-radius:0}
-}
-@media(min-width:641px){
-  .bottom-nav{display:none!important}
+  .tabs{width:100%}.tab{flex:1;text-align:center;padding:6px 4px}
+  .cfg{gap:6px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
-<!-- ── Header ── -->
 <div class="hdr">
   <div class="hdr-top">
     <h1 class="logo">Cricket <em>Schedule</em></h1>
-    <div class="hdr-right">
-      <span class="sync-lbl" id="syncLbl"></span>
-      <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
-    </div>
   </div>
-  <p class="tagline">Multi-league tracker · Playoff qualifier</p>
-  <div class="profile-chip" id="profileChip" onclick="openProfiles()">
-    <span class="profile-dot"></span>
-    <span id="profileName">default</span>
-  </div>
+  <p class="tagline">Multi-league tracker &nbsp;·&nbsp; Playoff qualifier</p>
 </div>
 
-<!-- ── Desktop top nav ── -->
-<div class="top-nav">
+<div class="tabs-wrap">
   <div class="tabs">
     <button class="tab active" onclick="showTab('schedule',this)">Schedule</button>
     <button class="tab" onclick="showTab('summary',this)">Summary</button>
-    <button class="tab" onclick="showTab('leagues',this)">Leagues</button>
   </div>
 </div>
 
-<!-- ── Main ── -->
 <div class="main">
 
-  <!-- file:// warning banner -->
-  <div id="fileBanner" style="display:none;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px">
-    <div style="font-size:13px;font-weight:500;color:var(--yellow);margin-bottom:6px">⚠ Opened as a local file — data cannot load</div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Browsers block network requests (Google Sheets, PWA features) when a file is opened directly. You need to serve it over HTTP.</p>
-    <div style="font-size:12px;color:var(--text);margin-bottom:6px"><strong>Option 1 — Local server (instant):</strong></div>
-    <code style="display:block;background:var(--surface2);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--accent);margin-bottom:10px;font-family:var(--mono)">cd /Users/nirup/git/ScheduleScrapper &amp;&amp; python3 -m http.server 8080</code>
-    <div style="font-size:12px;color:var(--muted)">Then open <strong style="color:var(--accent)">http://localhost:8080/cricket_schedule.html</strong> in your browser.</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:6px"><strong>Option 2 — GitHub Pages:</strong> Push to a repo and enable Pages in repository Settings.</div>
-  </div>
-
-  <!-- Install banner -->
-  <div class="install-banner" id="installBanner">
-    <span style="font-size:22px">🏏</span>
-    <p>Add to Home Screen for offline access and faster loading.</p>
-    <button class="btn" id="installBtn" onclick="installPWA()">Install</button>
-    <button class="btn btn-ghost" style="padding:6px 10px" onclick="dismissInstall()">✕</button>
-  </div>
-
-  <!-- Setup banner -->
-  <div class="setup-banner" id="setupBanner" style="display:none">
-    <h3>Connect your spreadsheet</h3>
-    <p>Paste your Google Spreadsheet ID or URL. The sheet must be shared as <em>Anyone with link can view</em> and published to web (File → Share → Publish to web → each tab as CSV).</p>
-    <div class="setup-row">
-      <input type="text" id="sheetInput" placeholder="Sheet ID or full URL…">
-      <button class="btn" onclick="saveSheet()">Connect</button>
-    </div>
-  </div>
-
-  <!-- Config bar -->
-  <div class="cfg" id="cfgBar" style="display:none">
-    <span class="cfg-lbl">SHEET</span>
-    <span id="sheetLbl" style="font-family:var(--mono);font-size:11px;color:var(--accent)"></span>
-    <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="changeSheet()">Change</button>
-    <div class="spacer"></div>
+  <!-- Config bar — sheet ID is hardcoded, no setup needed -->
+  <div class="cfg" id="cfgBar">
     <span class="cfg-lbl">MY TEAMS</span>
     <div class="team-picker" id="teamPickerWrap">
       <button class="team-picker-btn" id="teamPickerBtn" onclick="toggleTeamPicker(event)">All teams</button>
       <div class="team-dropdown" id="teamDropdown">
-        <div class="team-dropdown-header">Select your team(s)
+        <div class="team-dropdown-header">
+          Select your team(s)
           <a onclick="clearTeams()">Clear all</a>
         </div>
         <div style="padding:6px 8px;border-bottom:1px solid var(--border)">
-          <input type="text" id="teamSearch" placeholder="Search teams…" oninput="filterTeamOptions(this.value)"
+          <input type="text" id="teamSearch" placeholder="Search teams..." oninput="filterTeamOptions(this.value)"
             style="width:100%;padding:5px 8px;font-size:12px;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);outline:none">
         </div>
         <div id="teamOptionsList"></div>
       </div>
     </div>
     <button class="btn btn-ghost" id="myGamesBtn" onclick="toggleMyGamesOnly()" style="font-size:11px;padding:5px 12px">My games only</button>
-    <div class="view-toggle">
-      <button class="vt-btn active" id="vt-list" onclick="setView('list')">List</button>
-      <button class="vt-btn" id="vt-cal" onclick="setView('cal')">Grid</button>
-    </div>
-    <button class="btn" onclick="loadData(true)">↻</button>
+    <button class="btn btn-ghost" id="pastBtn" onclick="togglePastGames()" style="font-size:11px;padding:5px 12px">Show past</button>
+    <button class="btn" onclick="loadData(true)" style="margin-left:4px">↻ Refresh</button>
+    <span id="syncLbl" style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:8px"></span>
   </div>
 
-  <!-- Sync bar -->
-  <div class="sync-bar" id="syncBar" style="display:none">
-    <span class="dot dot-yellow" id="syncDot"></span>
-    <span id="syncBarTxt">Syncing played status…</span>
+  <!-- Selected team chips -->
+  <div id="teamChips" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center">
+    <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">MY TEAMS:</span>
   </div>
 
   <!-- SCHEDULE TAB -->
@@ -412,1017 +198,550 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     <div class="legend" id="calLegend" style="display:none">
       <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>My game</span>
       <span class="legend-item"><span style="display:inline-block;width:8px;height:8px;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.4);border-radius:2px"></span>Played</span>
-      <span class="conflict-badge">⚠ conflict</span><span style="font-size:11px">= same-day in 2+ leagues</span>
+      <span class="conflict-badge">⚠ conflict</span><span style="font-size:11px">= plays in 2+ leagues same day</span>
     </div>
-    <div id="schedWrap">
-      <div class="loading"><div class="spinner"></div>Loading schedule…</div>
+    <div class="cal-wrap" id="calWrap">
+      <div class="loading"><div class="spinner"></div>Loading schedule...</div>
     </div>
   </div>
 
   <!-- SUMMARY TAB -->
   <div id="tab-summary" class="section">
-    <div id="sumWrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+    <div id="sumWrap"><div class="loading"><div class="spinner"></div>Loading...</div></div>
   </div>
 
-  <!-- LEAGUES TAB -->
-  <div id="tab-leagues" class="section">
-    <div id="leaguesWrap">
-      <div class="loading"><div class="spinner"></div>Loading…</div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ── Bottom nav ── -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button class="bnav-btn active" id="bn-schedule" onclick="showTab('schedule',null,'bn-schedule')">
-      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Schedule
-    </button>
-    <button class="bnav-btn" id="bn-summary" onclick="showTab('summary',null,'bn-summary')">
-      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Summary
-    </button>
-    <button class="bnav-btn" id="bn-leagues" onclick="showTab('leagues',null,'bn-leagues')">
-      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-      Leagues
-    </button>
-  </div>
-</nav>
-
-<!-- ── Settings modal ── -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h2>Settings</h2>
-      <button class="modal-close" onclick="closeSettings()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="setting-row">
-        <label class="setting-lbl">GOOGLE APPS SCRIPT URL</label>
-        <input class="setting-inp" id="scriptUrlInp" type="text" placeholder="https://script.google.com/macros/s/…/exec">
-        <div class="setting-desc">Required for syncing played status across devices and submitting league requests. Deploy <code>apps_script.gs</code> as a Web App and paste the URL here.</div>
-      </div>
-      <div class="divider"></div>
-      <div class="setting-row">
-        <label class="setting-lbl">SPREADSHEET ID</label>
-        <input class="setting-inp" id="sheetIdInp" type="text" placeholder="Sheet ID or full URL">
-      </div>
-      <div class="divider"></div>
-      <div class="setting-row">
-        <label class="setting-lbl">DANGER ZONE</label>
-        <button class="btn btn-danger" style="font-size:11px" onclick="clearAllData()">Clear all local data</button>
-        <div class="setting-desc" style="margin-top:6px">Removes cached schedule, teams, and played data from this device.</div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeSettings()">Cancel</button>
-      <button class="btn" onclick="saveSettings()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── Profile modal ── -->
-<div class="modal-overlay" id="profileModal">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h2>Profiles</h2>
-      <button class="modal-close" onclick="closeProfiles()">×</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Each profile tracks its own teams, played games, and syncs independently.</p>
-      <div class="profile-list" id="profileList"></div>
-      <div class="divider"></div>
-      <div class="profile-add">
-        <input type="text" id="newProfileInp" placeholder="New profile name…" maxlength="32"
-          onkeydown="if(event.key==='Enter')addProfile()">
-        <button class="btn" onclick="addProfile()">Add</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeProfiles()">Done</button>
-    </div>
-  </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════════════
-let ALL       = [];       // all schedule rows (Schedule + History merged)
-let MIN_MAP   = {};       // league → min games needed
-let LEAGUES   = [];       // raw Leagues tab rows
-let CURRENT_VIEW = 'list'; // 'list' | 'cal'
-let MY_GAMES_ONLY = false;
-let deferredInstallPrompt = null;
+// ── Config — edit SHEET_ID to share with others ───────────────────────────────
+const SHEET_ID = '1YN5cqnw4LbI2NQEDOTxZOdWCF_A1Jid8ZENempkoo_0';
 
-const LEAGUE_COLORS = ['#22d3ee','#4ade80','#fbbf24','#f97316','#a78bfa','#fb7185','#34d399','#60a5fa'];
-const DEFAULT_MIN_GAMES = { 'WMCL':2,'VLCCL':2,'MCLT20':2,'MCPLeague':2,'FCPL 2026':2,'ASCL Spring':2 };
+// ── State ─────────────────────────────────────────────────────────────────────
+let ALL = [];
+let MIN_MAP = {};
+let PLAYED    = JSON.parse(localStorage.getItem('played')    || '{}');
+let MY_TEAMS  = JSON.parse(localStorage.getItem('myTeams')   || '[]');
+let MY_GAMES_ONLY = localStorage.getItem('myGamesOnly') === '1';
+let HIDE_PAST = localStorage.getItem('hidePast') !== '0'; // default TRUE — hide past games
 
-// ── Profile store ─────────────────────────────────────────────────
-function getProfiles()   { return JSON.parse(localStorage.getItem('profiles') || '["default"]'); }
-function getCurProfile() { return localStorage.getItem('curProfile') || 'default'; }
-function setCurProfile(p){ localStorage.setItem('curProfile', p); updateProfileChip(); }
+const LEAGUE_COLORS = ['#22d3ee','#4ade80','#fbbf24','#f97316','#a78bfa','#fb7185','#34d399'];
+const SCHED_COLS  = ['League Name','Sport','Year','Tournament','Match Date','Match Time','Home Team','Away Team','Venue','Match Status','Result','Scraped At'];
+const LEAGUE_COLS = ['League Name','Sport','Source URL','Source URL Past','Min Games','Status','Last Scraped','Season','Notes'];
 
-function updateProfileChip(){
-  document.getElementById('profileName').textContent = getCurProfile();
-}
+// ── Data loading ──────────────────────────────────────────────────────────────
+// Default min-games — used as fallback if Leagues tab fails to load.
+// Edit these values to match your league settings.
+const DEFAULT_MIN_GAMES = {
+  'WMCL':        2,
+  'VLCCL':       2,
+  'MCLT20':      2,
+  'MCPLeague':   2,
+  'FCPL 2026':   2,
+  'ASCL Spring': 2,
+};
 
-// ── Played store (per profile) ────────────────────────────────────
-function playedKey()    { return 'played_' + getCurProfile(); }
-function pendingKey()   { return 'pending_' + getCurProfile(); }
-function getPlayed()    { return JSON.parse(localStorage.getItem(playedKey())  || '{}'); }
-function getPending()   { return JSON.parse(localStorage.getItem(pendingKey()) || '{}'); }
-function savePlayed(p)  { localStorage.setItem(playedKey(),  JSON.stringify(p)); }
-function savePending(p) { localStorage.setItem(pendingKey(), JSON.stringify(p)); }
-
-// ── Teams store (per profile) ─────────────────────────────────────
-function teamsKey()     { return 'myTeams_' + getCurProfile(); }
-function getMyTeams()   { return JSON.parse(localStorage.getItem(teamsKey()) || '[]'); }
-function saveMyTeams(t) { localStorage.setItem(teamsKey(), JSON.stringify(t)); }
-
-// ── Settings ──────────────────────────────────────────────────────
-function getScriptUrl() { return localStorage.getItem('scriptUrl') || ''; }
-function getSheetId()   { return localStorage.getItem('sheetId')   || ''; }
-
-// ═══════════════════════════════════════════════════════════════════
-// SHEET CONNECT
-// ═══════════════════════════════════════════════════════════════════
-function saveSheet(){
-  let v = document.getElementById('sheetInput').value.trim();
-  const m = v.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  if(m) v = m[1];
-  if(!v) return;
-  localStorage.setItem('sheetId', v);
-  document.getElementById('setupBanner').style.display = 'none';
-  document.getElementById('cfgBar').style.display = 'flex';
-  document.getElementById('sheetLbl').textContent = v.slice(0,20) + (v.length>20?'…':'');
-  loadData();
-}
-
-function changeSheet(){
-  localStorage.removeItem('sheetId');
-  document.getElementById('setupBanner').style.display = 'flex';
-  document.getElementById('cfgBar').style.display = 'none';
-  ALL = [];
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// DATA LOADING
-// ═══════════════════════════════════════════════════════════════════
-async function loadData(force=false){
-  const id = getSheetId();
-  if(!id) return;
-
-  const ck = 'cache_' + id, ct = 'ctime_' + id;
-  const age = Date.now() - (+localStorage.getItem(ct) || 0);
-
-  if(!force && age < 3600000 && localStorage.getItem(ck)){
-    ALL     = JSON.parse(localStorage.getItem(ck));
-    MIN_MAP = JSON.parse(localStorage.getItem('minmap_' + id) || '{}');
-    LEAGUES = JSON.parse(localStorage.getItem('leagues_' + id) || '[]');
-    Object.entries(DEFAULT_MIN_GAMES).forEach(([k,v]) => { if(!MIN_MAP[k]) MIN_MAP[k]=v; });
-    document.getElementById('syncLbl').textContent = 'cached · ' + ago(+localStorage.getItem(ct));
-    buildUI();
-    return;
+function loadData(force=false){
+  const id=SHEET_ID;
+  const ck='cache_'+id, ct='ctime_'+id;
+  const age=Date.now()-(+localStorage.getItem(ct)||0);
+  if(!force && age<3600000 && localStorage.getItem(ck)){
+    ALL=JSON.parse(localStorage.getItem(ck));
+    MIN_MAP=JSON.parse(localStorage.getItem('minmap_'+id)||'{}');
+    Object.entries(DEFAULT_MIN_GAMES).forEach(([k,v])=>{ if(!MIN_MAP[k]) MIN_MAP[k]=v; });
+    document.getElementById('syncLbl').textContent='cached · '+ago(+localStorage.getItem(ct));
+    buildUI(); return;
   }
-
   setLoading();
 
-  try {
-    // Load Schedule + History + Leagues in parallel
-    const [schedRows, histRows, leagueRows] = await Promise.all([
-      fetchSheetCSV(id, 'Schedule').catch(()=>[]),
-      fetchSheetCSV(id, 'History').catch(()=>[]),
-      fetchSheetCSV(id, 'Leagues').catch(()=>[]),
-    ]);
+  // Step 1: Load Schedule tab
+  gvizQuery(id,'Schedule',25000,(rows)=>{
+    ALL=rows.filter(r=>{
+      const ln=r['League Name']||'';
+      const hm=r['Home Team']||'';
+      const md=r['Match Date']||'';
+      if(ln==='League Name'||hm==='Home Team'||md==='Match Date') return false;
+      return ln && md;
+    });
+    console.log('Schedule loaded:',ALL.length,'rows');
 
-    // Filter and merge schedule + history (deduplicate by game key)
-    const seen = new Set();
-    const combined = [];
-    for(const r of [...schedRows, ...histRows]){
-      const ln = r['League Name'] || '', md = r['Match Date'] || '', hm = r['Home Team'] || '';
-      if(!ln || !md || ln==='League Name' || hm==='Home Team') continue;
-      const k = gkey(r);
-      if(!seen.has(k)){ seen.add(k); combined.push(r); }
+    // Step 2: Load Leagues tab AFTER Schedule completes (sequential, not nested)
+    setTimeout(()=>{
+      gvizQuery(id,'Leagues',25000,(lr)=>{
+        if(lr.length>0) console.log('Leagues columns:',Object.keys(lr[0]),'first:',lr[0]);
+        lr.forEach(r=>{
+          const vals=Object.values(r);
+          const n=(r['League Name']||r['league name']||vals[0]||'').trim();
+          const m= r['Min Games']  ||r['min games']  ||r['MinGames']||
+                   r['min_games']  ||r['Minimum Games']||vals[4]||'';
+          if(n && m && n!=='League Name' && !isNaN(+m)) MIN_MAP[n]=+m||0;
+        });
+        console.log('MIN_MAP from sheet:',JSON.stringify(MIN_MAP));
+        finish();
+      }, ()=>{
+        console.warn('Leagues tab timed out — using DEFAULT_MIN_GAMES fallback');
+        finish();
+      });
+    }, 500); // small delay between requests to avoid Google rate limiting
+
+    function finish(){
+      // Apply defaults for any league not found in Leagues tab
+      Object.entries(DEFAULT_MIN_GAMES).forEach(([k,v])=>{ if(!MIN_MAP[k]) MIN_MAP[k]=v; });
+      console.log('Final MIN_MAP:',JSON.stringify(MIN_MAP));
+      localStorage.setItem('minmap_'+id,JSON.stringify(MIN_MAP));
+      localStorage.setItem(ck,JSON.stringify(ALL));
+      localStorage.setItem(ct,Date.now().toString());
+      document.getElementById('syncLbl').textContent='synced · '+ALL.length+' games';
+      buildUI();
     }
-    ALL = combined;
-    console.log('Combined rows (Schedule+History):', ALL.length);
-
-    // Parse leagues
-    LEAGUES = leagueRows.filter(r => {
-      const vals = Object.values(r);
-      return vals[0] && vals[0] !== 'League Name';
-    });
-    leagueRows.forEach(r => {
-      const vals = Object.values(r);
-      const n = (r['League Name'] || vals[0] || '').trim();
-      const m = r['Min Games']    || r['min games'] || vals[4] || '';
-      if(n && m && !isNaN(+m)) MIN_MAP[n] = +m;
-    });
-    Object.entries(DEFAULT_MIN_GAMES).forEach(([k,v]) => { if(!MIN_MAP[k]) MIN_MAP[k]=v; });
-
-    localStorage.setItem(ck, JSON.stringify(ALL));
-    localStorage.setItem(ct, Date.now().toString());
-    localStorage.setItem('minmap_' + id, JSON.stringify(MIN_MAP));
-    localStorage.setItem('leagues_' + id, JSON.stringify(LEAGUES));
-
-    document.getElementById('syncLbl').textContent = 'synced · ' + ALL.length + ' games';
-    buildUI();
-  } catch(err) {
-    showErr(err.message || String(err));
-  }
+  },(err)=>showErr(err));
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// CSV FETCH + PARSE
-// ═══════════════════════════════════════════════════════════════════
-async function fetchSheetCSV(sheetId, tabName){
-  const urls = [
-    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`,
-    `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&sheet=${encodeURIComponent(tabName)}`,
-  ];
-  for(const url of urls){
-    try{
-      const resp = await fetch(url, {mode:'cors'});
-      if(resp.ok){
-        const text = await resp.text();
-        if(text && !text.includes('<html') && text.length > 10) return parseCSV(text);
+// ── gviz JSONP ────────────────────────────────────────────────────────────────
+// ── Data fetching ─────────────────────────────────────────────────────────────
+// Primary:  Google Apps Script proxy  → works from file://, any browser, any device
+// Fallback: Published CSV             → works when hosted (GitHub Pages, etc.)
+//
+// APPS_SCRIPT_URL: paste your deployed web app URL here (see setup instructions)
+const APPS_SCRIPT_URL = ''; // e.g. 'https://script.google.com/macros/s/ABC123.../exec'
+
+async function fetchTab(tabName) {
+  if (APPS_SCRIPT_URL) {
+    try {
+      const url  = `${APPS_SCRIPT_URL}?tab=${encodeURIComponent(tabName)}`;
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const json = await resp.json();
+        if (json.error) throw new Error(json.error);
+        if (json.headers && json.rows) {
+          const rows = json.rows.map(row => {
+            const obj = {};
+            json.headers.forEach((h, i) => { obj[h] = (row[i] || '').trim(); });
+            return obj;
+          }).filter(r => Object.values(r).some(v => v));
+          console.log(`Apps Script [${tabName}]:`, rows.length, 'rows');
+          return rows;
+        }
       }
-    } catch(e){ console.warn('fetch failed:', url, e.message); }
+    } catch(e) {
+      console.warn(`Apps Script failed [${tabName}]:`, e.message, '→ trying CSV');
+    }
   }
-  throw new Error(`Could not load "${tabName}". Make sure the sheet is shared and published to web.`);
+  return fetchCSV(tabName);
 }
 
-function parseCSV(csv){
+async function fetchCSV(tabName) {
+  const urls = [
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`,
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(tabName)}`,
+  ];
+  for (const url of urls) {
+    try {
+      const resp = await fetch(url, { mode: 'cors' });
+      if (resp.ok) {
+        const text = await resp.text();
+        if (text && !text.includes('<html') && text.length > 10) return parseCSV(text);
+      }
+    } catch(e) { console.warn('CSV fetch failed:', e.message); }
+  }
+  throw new Error(`Cannot load data. Please set up the Apps Script proxy — see setup instructions in the project doc.`);
+}
+
+function parseCSV(csv) {
   const lines = csv.trim().split('\n');
-  if(lines.length < 2) return [];
+  if (lines.length < 2) return [];
   const headers = parseCSVLine(lines[0]);
   return lines.slice(1).map(line => {
     const vals = parseCSVLine(line);
-    const obj = {};
-    headers.forEach((h,i) => { obj[h] = (vals[i]||'').trim(); });
+    const obj  = {};
+    headers.forEach((h, i) => { obj[h] = (vals[i] || '').trim(); });
     return obj;
   });
 }
 
-function parseCSVLine(line){
+function parseCSVLine(line) {
   const result = []; let cur = '', inQ = false;
-  for(let i=0;i<line.length;i++){
-    if(line[i]==='"'){
-      if(inQ && line[i+1]==='"'){ cur+='"'; i++; } else inQ=!inQ;
-    } else if(line[i]===','&&!inQ){ result.push(cur); cur=''; }
-    else cur+=line[i];
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (line[i] === ',' && !inQ) {
+      result.push(cur); cur = '';
+    } else cur += line[i];
   }
   result.push(cur);
   return result;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// BUILD UI
-// ═══════════════════════════════════════════════════════════════════
-function buildUI(){
-  MY_GAMES_ONLY = localStorage.getItem('myGamesOnly') === '1';
-  CURRENT_VIEW  = localStorage.getItem('schedView')   || 'list';
-  buildTeamPicker();
-  updateMyGamesBtn();
-  updateViewToggle();
-  renderSchedule();
-  renderSummary();
-  renderLeagues();
-  pullPlayedFromServer(); // sync from Apps Script (non-blocking)
+function gvizQuery(sheetId, tabName, timeoutMs, onSuccess, onError) {
+  if (typeof timeoutMs === 'function') { onError = onSuccess; onSuccess = timeoutMs; timeoutMs = 20000; }
+  const timer = setTimeout(() => { if (onError) onError('Timeout: ' + tabName); }, timeoutMs);
+  fetchTab(tabName)
+    .then(rows => { clearTimeout(timer); onSuccess(rows); })
+    .catch(err  => { clearTimeout(timer); if (onError) onError(err.message); });
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// TEAM PICKER
-// ═══════════════════════════════════════════════════════════════════
+function buildUI(){
+  buildTeamPicker();
+  renderTeamChips();
+  // Restore toggle button states
+  const mgBtn=document.getElementById('myGamesBtn');
+  if(mgBtn && MY_GAMES_ONLY){ mgBtn.style.borderColor='var(--accent)'; mgBtn.style.color='var(--accent)'; mgBtn.textContent='✓ My games only'; }
+  const pastBtn=document.getElementById('pastBtn');
+  if(pastBtn){ pastBtn.style.borderColor=HIDE_PAST?'':'var(--accent)'; pastBtn.style.color=HIDE_PAST?'':'var(--accent)'; pastBtn.textContent=HIDE_PAST?'Show past':'Hide past'; }
+  renderCalendar();
+  renderSummary();
+}
+
+function renderTeamChips(){
+  const wrap = document.getElementById('teamChips');
+  if(!wrap) return;
+  if(MY_TEAMS.length === 0){ wrap.style.display='none'; return; }
+  wrap.style.display='flex';
+  // Remove old chips (keep the label span)
+  while(wrap.children.length > 1) wrap.removeChild(wrap.lastChild);
+  MY_TEAMS.forEach(key => {
+    const [league, team] = key.split('::');
+    const chip = document.createElement('span');
+    chip.style.cssText='display:inline-flex;align-items:center;gap:5px;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.3);border-radius:20px;padding:3px 10px 3px 12px;font-size:12px;color:var(--accent);font-family:var(--sans)';
+    chip.innerHTML=`<span style="color:var(--muted);font-size:10px;font-family:var(--mono)">${league}</span> ${team} <span onclick="toggleMyTeam('${key}',false)" style="cursor:pointer;color:var(--muted);font-size:14px;line-height:1;margin-left:2px" title="Remove">×</span>`;
+    wrap.appendChild(chip);
+  });
+}
 function buildTeamPicker(){
-  const leagues = uniqLeagues();
-  const list    = document.getElementById('teamOptionsList');
-  const myTeams = getMyTeams();
-  list.innerHTML = '';
-  leagues.forEach(league => {
-    const hdr = document.createElement('div');
-    hdr.className = 'league-group-hdr'; hdr.textContent = league;
+  const leagues=uniqLeagues();
+  const list=document.getElementById('teamOptionsList');
+  list.innerHTML='';
+  leagues.forEach(league=>{
+    const hdr=document.createElement('div');
+    hdr.className='league-group-hdr'; hdr.textContent=league;
     list.appendChild(hdr);
-    const teams = uniq([
+    const teams=uniq([
       ...ALL.filter(g=>g['League Name']===league).map(g=>g['Home Team']),
-      ...ALL.filter(g=>g['League Name']===league).map(g=>g['Away Team']),
+      ...ALL.filter(g=>g['League Name']===league).map(g=>g['Away Team'])
     ]).filter(Boolean).sort();
-    teams.forEach(team => {
-      const key = league + '::' + team;
-      const div = document.createElement('div'); div.className = 'team-option';
-      const cb  = document.createElement('input'); cb.type='checkbox';
-      cb.id = 'to_' + btoa(key).replace(/[^a-zA-Z0-9]/g,'').slice(0,12);
-      cb.checked = myTeams.includes(key);
-      cb.onchange = () => { toggleMyTeam(key, cb.checked); };
-      const lbl = document.createElement('label'); lbl.htmlFor = cb.id; lbl.textContent = team;
-      div.appendChild(cb); div.appendChild(lbl); list.appendChild(div);
+    teams.forEach(team=>{
+      const key=league+'::'+team;
+      const div=document.createElement('div'); div.className='team-option';
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.id='to_'+btoa(key).slice(0,12);
+      cb.checked=MY_TEAMS.includes(key);
+      cb.onchange=()=>{ toggleMyTeam(key,cb.checked); };
+      const lbl=document.createElement('label'); lbl.htmlFor=cb.id; lbl.textContent=team;
+      div.appendChild(cb); div.appendChild(lbl);
+      list.appendChild(div);
     });
   });
   updatePickerBtn();
 }
 
-function filterTeamOptions(q){
-  q = q.toLowerCase().trim();
+function filterTeamOptions(query) {
+  const q = query.toLowerCase().trim();
   document.querySelectorAll('#teamOptionsList .team-option').forEach(div => {
     const lbl = div.querySelector('label');
     div.style.display = (!q || (lbl && lbl.textContent.toLowerCase().includes(q))) ? '' : 'none';
   });
   document.querySelectorAll('#teamOptionsList .league-group-hdr').forEach(hdr => {
-    let next = hdr.nextElementSibling, any = false;
-    while(next && !next.classList.contains('league-group-hdr')){
-      if(next.style.display!=='none') any=true; next=next.nextElementSibling;
+    let next = hdr.nextElementSibling;
+    let anyVisible = false;
+    while (next && !next.classList.contains('league-group-hdr')) {
+      if (next.style.display !== 'none') anyVisible = true;
+      next = next.nextElementSibling;
     }
-    hdr.style.display = any ? '' : 'none';
+    hdr.style.display = anyVisible ? '' : 'none';
   });
 }
 
-function toggleMyTeam(key, add){
-  const t = getMyTeams();
-  const updated = add ? (t.includes(key)?t:[...t,key]) : t.filter(k=>k!==key);
-  saveMyTeams(updated);
+function toggleMyGamesOnly() {
+  MY_GAMES_ONLY = !MY_GAMES_ONLY;
+  localStorage.setItem('myGamesOnly', MY_GAMES_ONLY ? '1' : '0');
+  const btn = document.getElementById('myGamesBtn');
+  if(btn){
+    btn.style.borderColor = MY_GAMES_ONLY ? 'var(--accent)' : '';
+    btn.style.color       = MY_GAMES_ONLY ? 'var(--accent)' : '';
+    btn.textContent       = MY_GAMES_ONLY ? '✓ My games only' : 'My games only';
+  }
+  renderCalendar();
+}
+
+function togglePastGames() {
+  HIDE_PAST = !HIDE_PAST;
+  localStorage.setItem('hidePast', HIDE_PAST ? '1' : '0');
+  const btn = document.getElementById('pastBtn');
+  if(btn){
+    btn.style.borderColor = HIDE_PAST ? '' : 'var(--accent)';
+    btn.style.color       = HIDE_PAST ? '' : 'var(--accent)';
+    btn.textContent       = HIDE_PAST ? 'Show past' : 'Hide past';
+  }
+  renderCalendar();
+}
+
+function toggleMyTeam(key,add){
+  if(add){ if(!MY_TEAMS.includes(key)) MY_TEAMS.push(key); }
+  else MY_TEAMS=MY_TEAMS.filter(k=>k!==key);
+  // Sync checkbox state
+  const cb=document.querySelector(`#teamOptionsList input[id="to_${btoa(key).slice(0,12)}"]`);
+  if(cb) cb.checked=add;
+  localStorage.setItem('myTeams',JSON.stringify(MY_TEAMS));
   updatePickerBtn();
-  renderSchedule(); renderSummary();
+  renderTeamChips();
+  renderCalendar(); renderSummary();
 }
 
 function clearTeams(){
-  saveMyTeams([]);
+  MY_TEAMS=[];
+  localStorage.setItem('myTeams',JSON.stringify(MY_TEAMS));
   document.querySelectorAll('#teamOptionsList input[type=checkbox]').forEach(cb=>cb.checked=false);
-  updatePickerBtn(); renderSchedule(); renderSummary();
+  updatePickerBtn();
+  renderTeamChips();
+  renderCalendar(); renderSummary();
 }
 
 function updatePickerBtn(){
-  const btn = document.getElementById('teamPickerBtn');
-  const t   = getMyTeams();
-  if(t.length===0){ btn.textContent='All teams'; btn.classList.remove('has-selection'); }
-  else if(t.length===1){ btn.textContent=t[0].split('::')[1]; btn.classList.add('has-selection'); }
-  else{ btn.textContent=t.length+' teams'; btn.classList.add('has-selection'); }
+  const btn=document.getElementById('teamPickerBtn');
+  if(MY_TEAMS.length===0){ btn.textContent='All teams'; btn.classList.remove('has-selection'); }
+  else if(MY_TEAMS.length===1){ btn.textContent=MY_TEAMS[0].split('::')[1]; btn.classList.add('has-selection'); }
+  else{ btn.textContent=MY_TEAMS.length+' teams selected'; btn.classList.add('has-selection'); }
 }
 
 function toggleTeamPicker(e){
   e.stopPropagation();
   document.getElementById('teamDropdown').classList.toggle('open');
 }
-document.addEventListener('click', e => {
-  const wrap = document.getElementById('teamPickerWrap');
-  if(wrap && !wrap.contains(e.target)) document.getElementById('teamDropdown').classList.remove('open');
+// Close dropdown only when clicking OUTSIDE the picker wrapper
+document.addEventListener('click',(e)=>{
+  const wrap=document.getElementById('teamPickerWrap');
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById('teamDropdown').classList.remove('open');
+  }
 });
 
-function toggleMyGamesOnly(){
-  MY_GAMES_ONLY = !MY_GAMES_ONLY;
-  localStorage.setItem('myGamesOnly', MY_GAMES_ONLY ? '1' : '0');
-  updateMyGamesBtn(); renderSchedule();
+// ── My-team helpers ───────────────────────────────────────────────────────────
+function isMyTeam(leagueName,teamName){
+  if(MY_TEAMS.length===0) return false;
+  return MY_TEAMS.some(k=>k===leagueName+'::'+teamName);
 }
-function updateMyGamesBtn(){
-  const btn = document.getElementById('myGamesBtn');
-  if(!btn) return;
-  btn.style.borderColor = MY_GAMES_ONLY ? 'var(--accent)' : '';
-  btn.style.color       = MY_GAMES_ONLY ? 'var(--accent)' : '';
-  btn.textContent       = MY_GAMES_ONLY ? '✓ My games' : 'My games only';
+function myTeamsForLeague(league){
+  return MY_TEAMS.filter(k=>k.startsWith(league+'::')).map(k=>k.split('::')[1]);
 }
 
-function isMyTeam(league, team){ return getMyTeams().some(k => k === league+'::'+team); }
-function myTeamsForLeague(league){ return getMyTeams().filter(k=>k.startsWith(league+'::')).map(k=>k.split('::')[1]); }
-
-// ═══════════════════════════════════════════════════════════════════
-// VIEW TOGGLE
-// ═══════════════════════════════════════════════════════════════════
-function setView(v){
-  CURRENT_VIEW = v;
-  localStorage.setItem('schedView', v);
-  updateViewToggle();
-  renderSchedule();
-}
-function updateViewToggle(){
-  document.getElementById('vt-list').classList.toggle('active', CURRENT_VIEW==='list');
-  document.getElementById('vt-cal').classList.toggle('active',  CURRENT_VIEW==='cal');
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// RENDER SCHEDULE (dispatches to list or calendar)
-// ═══════════════════════════════════════════════════════════════════
-function renderSchedule(){
-  if(CURRENT_VIEW === 'list') renderList();
-  else                        renderCalendar();
-  document.getElementById('calLegend').style.display = getMyTeams().length > 0 ? 'flex' : 'none';
-}
-
-// ── LIST VIEW ─────────────────────────────────────────────────────
-function renderList(){
-  const wrap    = document.getElementById('schedWrap');
-  if(!ALL.length){ wrap.innerHTML = emptyHTML('🏏','No games','Sheet loaded but no game rows found.'); return; }
-
-  const today    = todayStr();
-  const myTeams  = getMyTeams();
-  const leagues  = uniqLeagues();
-  const lcColors = {};
-  leagues.forEach((l,i) => lcColors[l] = LEAGUE_COLORS[i % LEAGUE_COLORS.length]);
-
-  const byDate = {};
-  ALL.forEach(g => {
-    if(MY_GAMES_ONLY && myTeams.length > 0){
-      if(!isMyTeam(g['League Name'],g['Home Team']) && !isMyTeam(g['League Name'],g['Away Team'])) return;
-    }
-    (byDate[g['Match Date']] = byDate[g['Match Date']] || []).push(g);
-  });
-
-  const dates = Object.keys(byDate).sort();
-  if(!dates.length){ wrap.innerHTML = emptyHTML('🏏','No games for selected teams',''); return; }
-
-  const PLAYED = getPlayed();
-  let html = '';
-
-  dates.forEach(d => {
-    const isToday = d === today, isPast = d < today;
-    const hdrCls  = isToday ? 'today-hdr' : isPast ? 'past-hdr' : '';
-    const badge   = isToday ? '<span class="today-badge">TODAY</span>' : '';
-    html += `<div class="list-section">
-      <div class="list-date-hdr ${hdrCls}">${fmtDateFull(d)}${badge}</div>`;
-
-    const games = byDate[d].sort((a,b) => (a['Match Time']||'').localeCompare(b['Match Time']||''));
-    games.forEach(g => {
-      const k      = gkey(g);
-      const isDone = !!PLAYED[k];
-      const league = g['League Name'] || '';
-      const home   = g['Home Team']   || 'TBD';
-      const away   = g['Away Team']   || 'TBD';
-      const myGame = isMyTeam(league, home) || isMyTeam(league, away);
-      const homeHL = isMyTeam(league, home), awayHL = isMyTeam(league, away);
-      const color  = lcColors[league] || 'var(--accent)';
-      const result = g['Result'] || '';
-      const status = g['Match Status'] || '';
-
-      html += `<div class="list-card ${myGame?'my-game':''} ${isDone?'played-card':''}" id="lc-${k}">
-        <div class="list-card-top">
-          <div class="list-teams">
-            <span class="${homeHL?'hl':''}">${esc(home)}</span>
-            <span class="vs">vs</span>
-            <span class="${awayHL?'hl':''}">${esc(away)}</span>
-          </div>
-          <span class="list-league-tag" style="color:${color};background:${color}18;border:1px solid ${color}33">${esc(league)}</span>
-        </div>
-        <div class="list-meta">
-          ${g['Match Time'] ? `<span class="list-time">${esc(g['Match Time'])}</span>` : ''}
-          ${g['Venue']      ? `<span class="list-venue">📍 ${esc(g['Venue'])}</span>` : ''}
-          ${result          ? `<span class="list-result">${esc(result)}</span>` : (status && status!=='Scheduled' ? `<span class="list-time">${esc(status)}</span>` : '')}
-          <button class="played-btn ${isDone?'is-played':'not-played'}"
-            onclick="togglePlayed('${k}','lc-${k}',this,'list')">
-            ${isDone ? '✓ played' : 'mark played'}
-          </button>
-        </div>
-      </div>`;
-    });
-
-    html += `</div>`;
-  });
-
-  wrap.innerHTML = html;
-}
-
-// ── CALENDAR VIEW ─────────────────────────────────────────────────
+// ── Calendar grid render ──────────────────────────────────────────────────────
 function renderCalendar(){
-  const wrap    = document.getElementById('schedWrap');
-  if(!ALL.length){ wrap.innerHTML = emptyHTML('🏏','No games',''); return; }
+  const wrap=document.getElementById('calWrap');
+  if(!ALL.length){ wrap.innerHTML=emptyHTML('🏏','No games','Sheet loaded but no game rows found.'); return; }
 
-  const today   = todayStr();
-  const leagues = uniqLeagues();
-  const lc      = {};
-  leagues.forEach((l,i) => lc[l] = LEAGUE_COLORS[i % LEAGUE_COLORS.length]);
-  const PLAYED  = getPlayed();
-  const myTeams = getMyTeams();
+  const today=todayStr();
+  const leagues=uniqLeagues();
+  const leagueColors={};
+  leagues.forEach((l,i)=>leagueColors[l]=LEAGUE_COLORS[i%LEAGUE_COLORS.length]);
 
-  const byDate = {};
-  ALL.forEach(g => { (byDate[g['Match Date']]=byDate[g['Match Date']]||[]).push(g); });
-  const dates = Object.keys(byDate).sort();
+  // Group games by date
+  const byDate={};
+  ALL.forEach(g=>{ (byDate[g['Match Date']]=byDate[g['Match Date']]||[]).push(g); });
+  const dates=Object.keys(byDate).sort();
 
-  let html = `<div class="cal-wrap"><table class="cal-table"><thead><tr>
+  // Show legend
+  document.getElementById('calLegend').style.display=MY_TEAMS.length>0?'flex':'none';
+
+  let html=`<table class="cal-table"><thead><tr>
     <th class="date-col">Date</th>`;
-  leagues.forEach(l => { html += `<th class="league-col" style="color:${lc[l]}">${esc(l)}</th>`; });
-  html += `</tr></thead><tbody>`;
+  leagues.forEach(l=>{
+    html+=`<th class="league-col" style="color:${leagueColors[l]}">${l}</th>`;
+  });
+  html+=`</tr></thead><tbody>`;
 
-  dates.forEach(d => {
-    const dayGames = byDate[d];
-    if(MY_GAMES_ONLY && myTeams.length > 0){
-      if(!dayGames.some(g => isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']))) return;
+  dates.forEach(d=>{
+    const dayGames=byDate[d];
+    const isPast = d < today;
+
+    // Skip past dates when HIDE_PAST is on
+    if(HIDE_PAST && isPast) return;
+
+    // When "my games only" + teams selected, skip dates where I have no games
+    if(MY_GAMES_ONLY && MY_TEAMS.length>0){
+      const hasMyGame=dayGames.some(g=>isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']));
+      if(!hasMyGame) return;
     }
-    const isToday = d===today, isPast = d<today;
-    const myLeagues = new Set();
-    if(myTeams.length>0) dayGames.forEach(g => {
-      if(isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team'])) myLeagues.add(g['League Name']);
-    });
-    const conflict = myLeagues.size > 1;
 
-    html += `<tr class="${conflict?'conflict-row':''}">
-      <td class="date-cell ${isToday?'today':isPast?'past':''}">
-        ${conflict?'<span class="conflict-badge" title="Game conflict">⚠</span> ':''}${fmtDateShort(d, isToday)}
-      </td>`;
+    const isToday=d===today;
 
-    leagues.forEach(league => {
-      let games = dayGames.filter(g=>g['League Name']===league)
-        .sort((a,b)=>(a['Match Time']||'').localeCompare(b['Match Time']||''));
-      if(MY_GAMES_ONLY && myTeams.length>0)
-        games = games.filter(g=>isMyTeam(league,g['Home Team'])||isMyTeam(league,g['Away Team']));
-
-      html += `<td class="game-cell">`;
-      if(!games.length){ html += `<div class="empty-cell">–</div>`; }
-      else games.forEach(g => {
-        const k = gkey(g), isDone = !!PLAYED[k];
-        const home=g['Home Team']||'TBD', away=g['Away Team']||'TBD';
-        const myGame=isMyTeam(league,home)||isMyTeam(league,away);
-        html += `<div class="gcell ${myGame?'my-game':''} ${isDone?'played':''}" id="gc-${k}">
-          <div class="gcell-teams">
-            <span class="${isMyTeam(league,home)?'hl':''}">${esc(home)}</span>
-            <span style="color:var(--muted);font-size:9px"> vs </span>
-            <span class="${isMyTeam(league,away)?'hl':''}">${esc(away)}</span>
-          </div>
-          <div class="gcell-meta">
-            ${g['Match Time']?`<span class="gcell-time">${esc(g['Match Time'])}</span>`:''}
-            ${g['Venue']?`<span class="gcell-venue">${esc(g['Venue'])}</span>`:''}
-            <button class="gcell-played-btn ${isDone?'is-played':'not-played'}"
-              onclick="togglePlayed('${k}','gc-${k}',this,'cal')">
-              ${isDone?'✓ played':'mark played'}
-            </button>
-          </div>
-        </div>`;
+    // Check conflict: any of my teams plays in 2+ leagues this day
+    const myLeaguesThisDay=new Set();
+    if(MY_TEAMS.length>0){
+      dayGames.forEach(g=>{
+        if(isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']))
+          myLeaguesThisDay.add(g['League Name']);
       });
-      html += `</td>`;
+    }
+    const hasConflict=myLeaguesThisDay.size>1;
+
+    html+=`<tr class="${hasConflict?'conflict-row':''}">`;
+    html+=`<td class="date-cell ${isToday?'today':isPast?'past':''}">`;
+    if(hasConflict) html+=`<span class="conflict-badge" title="You have games in multiple leagues today">⚠</span> `;
+    html+=fmtDateShort(d,isToday);
+    html+=`</td>`;
+
+    leagues.forEach(league=>{
+      let games=dayGames.filter(g=>g['League Name']===league).sort((a,b)=>(a['Match Time']||'').localeCompare(b['Match Time']||''));
+      // When "my games only" is on and teams are selected, filter to only my games
+      if(MY_GAMES_ONLY && MY_TEAMS.length>0){
+        games=games.filter(g=>isMyTeam(league,g['Home Team'])||isMyTeam(league,g['Away Team']));
+      }
+      html+=`<td class="game-cell">`;
+      if(games.length===0){
+        html+=`<div class="empty-cell">–</div>`;
+      } else {
+        games.forEach(g=>{
+          const k=gkey(g);
+          const isDone=!!PLAYED[k];
+          const myGame=isMyTeam(league,g['Home Team'])||isMyTeam(league,g['Away Team']);
+          const home=g['Home Team']||'TBD', away=g['Away Team']||'TBD';
+          const homeHL=isMyTeam(league,home), awayHL=isMyTeam(league,away);
+          html+=`<div class="gcell ${myGame?'my-game':''} ${isDone?'played':''}" id="gc-${k}">
+            <div class="gcell-teams">
+              <span class="${homeHL?'hl':''}">${home}</span>
+              <span style="color:var(--muted);font-size:9px"> vs </span>
+              <span class="${awayHL?'hl':''}">${away}</span>
+            </div>
+            <div class="gcell-meta">
+              ${g['Match Time']?`<span class="gcell-time">${g['Match Time']}</span>`:''}
+              ${g['Venue']?`<span class="gcell-venue">${g['Venue']}</span>`:''}
+              <button class="gcell-played-btn ${isDone?'is-played':'not-played'}"
+                onclick="togglePlayed('${k}','gc-${k}',this)">
+                ${isDone?'✓ played':'mark played'}
+              </button>
+            </div>
+          </div>`;
+        });
+      }
+      html+=`</td>`;
     });
-    html += `</tr>`;
+    html+=`</tr>`;
   });
 
-  html += `</tbody></table></div>`;
-  wrap.innerHTML = html;
+  html+=`</tbody></table>`;
+  wrap.innerHTML=html;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// PLAYED TOGGLE
-// ═══════════════════════════════════════════════════════════════════
-function togglePlayed(k, cardId, btn, viewType){
-  const PLAYED  = getPlayed();
-  const PENDING = getPending();
-  const isDone  = !!PLAYED[k];
-  const newVal  = !isDone;
-
-  if(newVal) PLAYED[k] = true; else delete PLAYED[k];
-  savePlayed(PLAYED);
-
-  // Queue for server sync
-  PENDING[k] = newVal;
-  savePending(PENDING);
-  pushPlayedToServer(); // non-blocking
-
-  // Update DOM
-  const card = document.getElementById(cardId);
-  if(card){
-    if(viewType === 'list') card.classList.toggle('played-card', newVal);
-    else                    card.classList.toggle('played', newVal);
-  }
-  if(btn){
-    btn.className = (viewType==='cal'?'gcell-played-btn ':'played-btn ') + (newVal?'is-played':'not-played');
-    btn.textContent = newVal ? '✓ played' : 'mark played';
-  }
+function togglePlayed(k,cardId,btn){
+  const isDone=!!PLAYED[k];
+  if(isDone){ delete PLAYED[k]; }
+  else{ PLAYED[k]=true; }
+  localStorage.setItem('played',JSON.stringify(PLAYED));
+  const card=document.getElementById(cardId);
+  if(card){ card.classList.toggle('played',!isDone); }
+  if(btn){ btn.className='gcell-played-btn '+(isDone?'not-played':'is-played'); btn.textContent=isDone?'mark played':'✓ played'; }
   renderSummary();
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// SERVER SYNC (Apps Script)
-// ═══════════════════════════════════════════════════════════════════
-async function pullPlayedFromServer(){
-  const url = getScriptUrl(); if(!url) return;
-  try{
-    const resp = await fetch(`${url}?action=getPlayed&profile=${encodeURIComponent(getCurProfile())}`);
-    if(!resp.ok) return;
-    const data = await resp.json();
-    if(data.played){
-      const local  = getPlayed();
-      // Merge: server wins for keys not in pending queue
-      const pending = getPending();
-      Object.entries(data.played).forEach(([k,v]) => {
-        if(!(k in pending)){
-          if(v) local[k] = true; else delete local[k];
-        }
-      });
-      savePlayed(local);
-      renderSchedule(); renderSummary();
-      setSyncBar('green', 'Played status synced from server');
-    }
-  } catch(e){ console.warn('pull played failed:', e); }
-}
-
-async function pushPlayedToServer(){
-  const url = getScriptUrl(); if(!url) return;
-  const pending = getPending();
-  if(!Object.keys(pending).length) return;
-  setSyncBar('yellow', 'Syncing played status…');
-  try{
-    const resp = await fetch(url, {
-      method:'POST',
-      body: JSON.stringify({ action:'syncPlayed', profile:getCurProfile(), played:pending }),
-    });
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
-    const data = await resp.json();
-    if(data.ok){
-      savePending({});
-      setSyncBar('green', `Synced ${data.synced} game(s)`);
-      setTimeout(() => document.getElementById('syncBar').style.display='none', 3000);
-    }
-  } catch(e){
-    setSyncBar('red', 'Sync failed — will retry on next change');
-    console.warn('push played failed:', e);
-  }
-}
-
-function setSyncBar(color, msg){
-  const bar = document.getElementById('syncBar');
-  const dot = document.getElementById('syncDot');
-  const txt = document.getElementById('syncBarTxt');
-  bar.style.display = 'flex';
-  dot.className = `dot dot-${color}`;
-  txt.textContent = msg;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// SUMMARY
-// ═══════════════════════════════════════════════════════════════════
+// ── Summary render ────────────────────────────────────────────────────────────
 function renderSummary(){
-  const el      = document.getElementById('sumWrap');
-  const leagues = uniqLeagues();
-  if(!leagues.length){ el.innerHTML = emptyHTML('📊','No data',''); return; }
-  const today  = todayStr();
-  const PLAYED = getPlayed();
-  let html = '<div class="sum-grid">';
+  const el=document.getElementById('sumWrap');
+  const leagues=uniqLeagues();
+  if(!leagues.length){ el.innerHTML=emptyHTML('📊','No data',''); return; }
+  const today=todayStr();
+  let html='<div class="sum-grid">';
 
-  leagues.forEach(league => {
-    const myTeams = myTeamsForLeague(league);
-    const lg      = ALL.filter(g => g['League Name']===league);
-    const my      = myTeams.length > 0
-      ? lg.filter(g => myTeams.includes(g['Home Team'])||myTeams.includes(g['Away Team']))
+  leagues.forEach(league=>{
+    const myTeams=myTeamsForLeague(league);
+    const lg=ALL.filter(g=>g['League Name']===league);
+    // my games = filtered to selected team(s), or all league games if no team selected
+    const my=myTeams.length>0
+      ? lg.filter(g=>myTeams.includes(g['Home Team'])||myTeams.includes(g['Away Team']))
       : lg;
 
-    const total     = my.length;
-    const played_n  = my.filter(g => PLAYED[gkey(g)]).length;
-    const completed = my.filter(g => g['Match Date'] && g['Match Date'] < today).length;
-    const pending   = my.filter(g => g['Match Date'] && g['Match Date'] >= today && !PLAYED[gkey(g)]).length;
-    const minN      = MIN_MAP[league] || 0;
-    const need      = Math.max(0, minN - played_n);
+    const total    = my.length;
+    const played_n = my.filter(g=>PLAYED[gkey(g)]).length;
+    // Completed = past games (match date < today) regardless of user toggle
+    const completed= my.filter(g=>g['Match Date'] && g['Match Date']<today).length;
+    // Pending = future games not yet played
+    const pending  = my.filter(g=>g['Match Date'] && g['Match Date']>=today && !PLAYED[gkey(g)]).length;
 
-    let cls='hg', lbl='Tracking';
-    if(minN > 0){
-      if(played_n >= minN)    { cls='hg'; lbl='Qualified ✓'; }
-      else if(pending >= need){ cls='hy'; lbl='At risk'; }
-      else                    { cls='hr'; lbl='Will miss'; }
+    const minN  = MIN_MAP[league]||0;
+    const need  = Math.max(0, minN - played_n);
+    const upcoming = pending; // alias for clarity in progress text
+
+    // Health logic
+    let cls='hg', lbl='On track';
+    if(minN>0){
+      if(played_n>=minN)    { cls='hg'; lbl='Qualified ✓'; }
+      else if(pending>=need){ cls='hy'; lbl='At risk'; }
+      else                  { cls='hr'; lbl='Will miss'; }
+    } else {
+      cls='hg'; lbl='Tracking';
     }
-    const fc  = cls==='hg'?'var(--green)':cls==='hy'?'var(--yellow)':'var(--red)';
-    const pp  = minN>0 ? Math.min(100,Math.round(played_n/minN*100))
-              : total>0? Math.min(100,Math.round(played_n/total*100)) : 0;
-    const teamLbl = myTeams.length>0 ? myTeams.join(', ') : 'all teams';
 
-    html += `<div class="sum-card ${cls}">
-      <div class="sum-league">${esc(league)}</div>
-      <div class="sum-team">${esc(teamLbl)}</div>
+    const fc   = cls==='hg'?'var(--green)':cls==='hy'?'var(--yellow)':'var(--red)';
+    const pp   = minN>0 ? Math.min(100,Math.round(played_n/minN*100))
+               : total>0 ? Math.min(100,Math.round(played_n/total*100)) : 0;
+    const needColor = need>0?'var(--yellow)':'var(--green)';
+    const teamLbl   = myTeams.length>0 ? myTeams.join(', ') : 'all teams';
+
+    html+=`<div class="sum-card ${cls}">
+      <div class="sum-league">${league}</div>
+      <div class="sum-team">${teamLbl}</div>
       <span class="hlabel">${lbl}</span>
-      <div class="stats-row">
+
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
         <div class="sbox"><div class="snum">${total}</div><div class="slbl">Total</div></div>
-        <div class="sbox"><div class="snum">${completed}</div><div class="slbl">Past</div></div>
-        <div class="sbox"><div class="snum">${pending}</div><div class="slbl">Upcoming</div></div>
+        <div class="sbox"><div class="snum">${completed}</div><div class="slbl">Completed</div></div>
+        <div class="sbox"><div class="snum">${pending}</div><div class="slbl">Pending</div></div>
       </div>
+
       <div style="height:1px;background:var(--border);margin-bottom:10px"></div>
+
       <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Playoff qualification</div>
-      <div class="stats-row">
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
         <div class="sbox"><div class="snum">${played_n}</div><div class="slbl">Played</div></div>
         <div class="sbox"><div class="snum">${minN||'—'}</div><div class="slbl">Min needed</div></div>
-        <div class="sbox"><div class="snum" style="color:${need>0?'var(--yellow)':'var(--green)'}">${need>0?need:'✓'}</div><div class="slbl">Still need</div></div>
+        <div class="sbox"><div class="snum" style="color:${needColor}">${need>0?need:'✓'}</div><div class="slbl">Still need</div></div>
       </div>
+
       <div class="prog"><div class="prog-fill" style="width:${pp}%;background:${fc}"></div></div>
-      <div class="prog-txt">${played_n} of ${minN||total} played · ${pending} upcoming</div>
+      <div class="prog-txt">${played_n} of ${minN||total} played · ${upcoming} upcoming</div>
     </div>`;
   });
 
-  el.innerHTML = html + '</div>';
+  el.innerHTML=html+'</div>';
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// LEAGUES TAB
-// ═══════════════════════════════════════════════════════════════════
-function renderLeagues(){
-  const wrap = document.getElementById('leaguesWrap');
-  const scriptUrl = getScriptUrl();
-  let html = '';
-
-  // League cards
-  if(LEAGUES.length > 0){
-    html += `<div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:10px;">${LEAGUES.length} league(s) in registry</div>`;
-    html += '<div class="leagues-grid">';
-    LEAGUES.forEach(r => {
-      const vals   = Object.values(r);
-      const name   = (r['League Name'] || vals[0] || '').trim();
-      const sport  = (r['Sport']       || vals[1] || 'Cricket').trim();
-      const status = (r['Status']      || vals[5] || '').trim().toLowerCase();
-      const season = (r['Season']      || vals[7] || '').trim();
-      const notes  = (r['Notes']       || vals[8] || '').trim();
-      if(!name) return;
-      const scls = status==='approved'?'status-approved':status==='requested'?'status-requested':'status-other';
-      html += `<div class="league-card">
-        <div class="league-card-name">${esc(name)}</div>
-        <div class="league-card-meta">${esc(sport)}${season?' · '+esc(season):''}</div>
-        <span class="status-badge ${scls}">${esc(status||'unknown')}</span>
-        ${notes?`<div style="font-size:11px;color:var(--muted);margin-top:8px">${esc(notes)}</div>`:''}
-      </div>`;
-    });
-    html += '</div><div class="divider"></div>';
-  } else {
-    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:16px">No leagues loaded yet. Connect your sheet first.</div>`;
-  }
-
-  // Request form
-  html += `<div class="request-form">
-    <h3>Request a new league</h3>
-    ${!scriptUrl ? `<div style="font-size:12px;color:var(--yellow);margin-bottom:12px">⚠ Configure your Apps Script URL in Settings to enable submissions.</div>` : ''}
-    <div class="form-row">
-      <label class="form-lbl">LEAGUE NAME *</label>
-      <input class="form-inp" id="req-name" placeholder="e.g. Summer Cricket League 2026">
-    </div>
-    <div class="form-row-2">
-      <div class="form-row" style="margin-bottom:0">
-        <label class="form-lbl">SPORT</label>
-        <input class="form-inp" id="req-sport" placeholder="Cricket" value="Cricket">
-      </div>
-      <div class="form-row" style="margin-bottom:0">
-        <label class="form-lbl">SEASON</label>
-        <input class="form-inp" id="req-season" placeholder="2026">
-      </div>
-    </div>
-    <div class="form-row" style="margin-top:10px">
-      <label class="form-lbl">SCHEDULE PAGE URL</label>
-      <input class="form-inp" id="req-url" placeholder="https://…" type="url">
-    </div>
-    <div class="form-row">
-      <label class="form-lbl">PAST RESULTS URL (optional)</label>
-      <input class="form-inp" id="req-url-past" placeholder="https://…" type="url">
-    </div>
-    <div class="form-row">
-      <label class="form-lbl">NOTES</label>
-      <input class="form-inp" id="req-notes" placeholder="Any extra info for the admin…">
-    </div>
-    <button class="btn" onclick="submitLeagueRequest()" ${scriptUrl?'':'disabled'} style="${scriptUrl?'':'opacity:.4;cursor:not-allowed'}" id="reqSubmitBtn">Submit Request</button>
-    <div class="form-success" id="req-success">✓ League request submitted! Admin will review and approve.</div>
-    <div class="form-note">Submitted requests go to admin for review. Status will show as <em>Requested</em> until approved.</div>
-  </div>`;
-
-  wrap.innerHTML = html;
-}
-
-async function submitLeagueRequest(){
-  const url = getScriptUrl(); if(!url) return;
-  const name = document.getElementById('req-name').value.trim();
-  if(!name){ alert('League name is required.'); return; }
-
-  const btn = document.getElementById('reqSubmitBtn');
-  btn.disabled = true; btn.textContent = 'Submitting…';
-
-  const payload = {
-    action: 'requestLeague',
-    profile: getCurProfile(),
-    league: {
-      name,
-      sport:         document.getElementById('req-sport').value.trim()    || 'Cricket',
-      sourceUrl:     document.getElementById('req-url').value.trim(),
-      sourceUrlPast: document.getElementById('req-url-past').value.trim(),
-      notes:         (document.getElementById('req-season').value.trim() ? 'Season: '+document.getElementById('req-season').value.trim()+'. ' : '') +
-                     document.getElementById('req-notes').value.trim(),
-    }
-  };
-
-  try{
-    const resp = await fetch(url, { method:'POST', body: JSON.stringify(payload) });
-    const data = await resp.json();
-    if(data.ok){
-      document.getElementById('req-success').style.display = 'block';
-      ['req-name','req-url','req-url-past','req-notes'].forEach(id => document.getElementById(id).value = '');
-    } else {
-      alert('Error: ' + (data.error || 'Unknown error'));
-    }
-  } catch(e){
-    alert('Failed to submit. Check your Apps Script URL in Settings.');
-  } finally {
-    btn.disabled = false; btn.textContent = 'Submit Request';
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// SETTINGS MODAL
-// ═══════════════════════════════════════════════════════════════════
-function openSettings(){
-  document.getElementById('scriptUrlInp').value = getScriptUrl();
-  document.getElementById('sheetIdInp').value   = getSheetId();
-  document.getElementById('settingsModal').classList.add('open');
-}
-function closeSettings(){ document.getElementById('settingsModal').classList.remove('open'); }
-function saveSettings(){
-  const su = document.getElementById('scriptUrlInp').value.trim();
-  const si = document.getElementById('sheetIdInp').value.trim();
-  if(su) localStorage.setItem('scriptUrl', su);
-  if(si){
-    let v = si; const m = si.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-    if(m) v = m[1];
-    localStorage.setItem('sheetId', v);
-    document.getElementById('sheetLbl').textContent = v.slice(0,20)+(v.length>20?'…':'');
-    document.getElementById('setupBanner').style.display = 'none';
-    document.getElementById('cfgBar').style.display = 'flex';
-  }
-  closeSettings();
-  renderLeagues(); // refresh form state
-}
-function clearAllData(){
-  if(!confirm('Clear all local data? This removes the cache, teams, and played history from this device.')) return;
-  const keep = ['curProfile','profiles','scriptUrl'];
-  Object.keys(localStorage).forEach(k => { if(!keep.includes(k)) localStorage.removeItem(k); });
-  location.reload();
-}
-document.getElementById('settingsModal').addEventListener('click', e => {
-  if(e.target === e.currentTarget) closeSettings();
-});
-
-// ═══════════════════════════════════════════════════════════════════
-// PROFILES MODAL
-// ═══════════════════════════════════════════════════════════════════
-function openProfiles(){
-  renderProfileList();
-  document.getElementById('profileModal').classList.add('open');
-}
-function closeProfiles(){ document.getElementById('profileModal').classList.remove('open'); }
-
-function renderProfileList(){
-  const profiles = getProfiles();
-  const cur      = getCurProfile();
-  const list     = document.getElementById('profileList');
-  list.innerHTML = '';
-  profiles.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'profile-item' + (p===cur?' active-profile':'');
-    div.innerHTML = `<span class="profile-dot" style="background:${p===cur?'var(--accent)':'var(--muted)'}"></span>
-      <span class="profile-item-name">${esc(p)}</span>
-      ${p===cur?'<span class="profile-item-badge">active</span>':
-        `<button class="btn btn-ghost" style="font-size:11px;padding:3px 10px" onclick="switchProfile('${esc(p)}')">Switch</button>`}`;
-    list.appendChild(div);
-  });
-}
-
-function switchProfile(p){
-  setCurProfile(p);
-  renderProfileList();
-  updatePickerBtn();
-  buildTeamPicker();
-  renderSchedule(); renderSummary();
-  pullPlayedFromServer();
-}
-
-function addProfile(){
-  const inp = document.getElementById('newProfileInp');
-  const name = inp.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g,'_');
-  if(!name) return;
-  const profiles = getProfiles();
-  if(profiles.includes(name)){ alert('Profile already exists.'); return; }
-  profiles.push(name);
-  localStorage.setItem('profiles', JSON.stringify(profiles));
-  inp.value = '';
-  switchProfile(name);
-  renderProfileList();
-}
-
-document.getElementById('profileModal').addEventListener('click', e => {
-  if(e.target === e.currentTarget) closeProfiles();
-});
-
-// ═══════════════════════════════════════════════════════════════════
-// TAB NAVIGATION
-// ═══════════════════════════════════════════════════════════════════
-function showTab(id, topBtn, bnId){
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  if(topBtn) topBtn.classList.add('active');
-  if(bnId)   document.getElementById(bnId).classList.add('active');
-  // Keep top tabs in sync with bottom nav clicks
-  const tabIdx = {schedule:0,summary:1,leagues:2};
-  if(tabIdx[id] !== undefined){
-    document.querySelectorAll('.tab')[tabIdx[id]]?.classList.add('active');
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// PWA INSTALL
-// ═══════════════════════════════════════════════════════════════════
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  if(localStorage.getItem('installDismissed') !== '1')
-    document.getElementById('installBanner').style.display = 'flex';
-});
-async function installPWA(){
-  if(!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  await deferredInstallPrompt.userChoice;
-  deferredInstallPrompt = null;
-  document.getElementById('installBanner').style.display = 'none';
-}
-function dismissInstall(){
-  localStorage.setItem('installDismissed','1');
-  document.getElementById('installBanner').style.display = 'none';
-}
-window.addEventListener('appinstalled', () => {
-  document.getElementById('installBanner').style.display = 'none';
-});
-
-// Register service worker
-if('serviceWorker' in navigator && location.protocol !== 'file:'){
-  navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW:', e));
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════════════════════
-function gkey(g){
-  return btoa(unescape(encodeURIComponent(
-    [g['League Name'],g['Match Date'],g['Home Team'],g['Away Team']].join('|')
-  ))).replace(/[=+/]/g,'_');
-}
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function gkey(g){ return btoa(unescape(encodeURIComponent([g['League Name'],g['Match Date'],g['Home Team'],g['Away Team']].join('|')))).replace(/[=+/]/g,'_'); }
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 function uniq(arr){ return [...new Set(arr)]; }
 function uniqLeagues(){
   return uniq(ALL.map(g=>g['League Name']))
-    .filter(l => l && l!=='League Name' && l!=='league name').sort();
+    .filter(l=>l && l!=='League Name' && l!=='league name')
+    .sort();
 }
-function ago(ts){
-  const m = Math.floor((Date.now()-ts)/60000);
-  return m<1?'just now':m<60?m+'m ago':Math.floor(m/60)+'h ago';
-}
-function fmtDateShort(d, isToday){
+function ago(ts){ const m=Math.floor((Date.now()-ts)/60000); return m<1?'just now':m<60?m+'m ago':Math.floor(m/60)+'h ago'; }
+function fmtDateShort(d,isToday){
   if(!d) return '';
   try{
-    const dt = new Date(d+'T12:00:00');
-    const s  = dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-    return isToday ? 'TODAY · '+s : s;
-  } catch(e){ return d; }
+    const dt=new Date(d+'T12:00:00');
+    const s=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    return isToday?'TODAY · '+s:s;
+  }catch(e){return d;}
 }
-function fmtDateFull(d){
-  if(!d) return '';
-  try{
-    const dt = new Date(d+'T12:00:00');
-    return dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-  } catch(e){ return d; }
-}
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function emptyHTML(icon,h,p){
-  return `<div class="empty"><div style="font-size:32px;margin-bottom:10px;opacity:.5">${icon}</div>
-    <h3>${h}</h3>${p?`<p style="font-size:12px;margin-top:5px">${p}</p>`:''}</div>`;
+  return `<div class="empty"><div style="font-size:32px;margin-bottom:10px;opacity:.5">${icon}</div><h3>${h}</h3>${p?`<p style="font-size:12px;margin-top:5px">${p}</p>`:''}</div>`;
 }
 function setLoading(){
-  document.getElementById('schedWrap').innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
-  document.getElementById('sumWrap').innerHTML   = '<div class="loading"><div class="spinner"></div>Loading…</div>';
-  document.getElementById('leaguesWrap').innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  document.getElementById('calWrap').innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';
+  document.getElementById('sumWrap').innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';
 }
 function showErr(msg){
-  const h = `<div class="empty"><h3>Could not load</h3>
-    <p style="font-family:var(--mono);font-size:11px;color:var(--red);margin-top:8px">${esc(msg)}</p>
-    <button class="btn" style="margin-top:12px" onclick="loadData(true)">Retry</button></div>`;
-  document.getElementById('schedWrap').innerHTML = h;
+  const h=`<div class="empty"><h3>Could not load</h3><p style="font-family:var(--mono);font-size:11px;color:var(--red);margin-top:8px">${msg}</p><button class="btn" style="margin-top:12px" onclick="loadData(true)">Retry</button></div>`;
+  document.getElementById('calWrap').innerHTML=h;
+}
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// BOOT
-// ═══════════════════════════════════════════════════════════════════
+// ── Boot ──────────────────────────────────────────────────────────────────────
 (function(){
-  updateProfileChip();
-
-  // file:// — show warning, skip everything else
-  if(location.protocol === 'file:'){
-    document.getElementById('fileBanner').style.display = 'block';
-    ['schedWrap','sumWrap'].forEach(x =>
-      document.getElementById(x).innerHTML = emptyHTML('⚠','Serve over HTTP to load data','See the yellow banner above.')
-    );
-    document.getElementById('leaguesWrap').innerHTML =
-      emptyHTML('⚠','Serve over HTTP to load data','See the yellow banner above.');
-    return;
-  }
-
-  const id = getSheetId();
-  if(!id){
-    document.getElementById('setupBanner').style.display = 'flex';
-    setLoading();
-    ['schedWrap','sumWrap'].forEach(x =>
-      document.getElementById(x).innerHTML = emptyHTML('↑','Enter your Sheet ID','Paste your Google Spreadsheet ID above to get started.')
-    );
-    document.getElementById('leaguesWrap').innerHTML =
-      emptyHTML('🏏','Connect a sheet first','League data loads from your Google Spreadsheet.');
-  } else {
-    document.getElementById('cfgBar').style.display = 'flex';
-    document.getElementById('sheetLbl').textContent = id.slice(0,20)+(id.length>20?'…':'');
-    loadData();
-  }
+  loadData();
 })();
 </script>
 </body>
