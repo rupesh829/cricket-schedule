@@ -140,10 +140,40 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 @keyframes spin{to{transform:rotate(360deg)}}
 .section{display:none}.section.active{display:block}
 
-@media(max-width:640px){
-  .tabs{width:100%}.tab{flex:1;text-align:center;padding:6px 4px}
+/* ── List / card view (mobile-friendly) ── */
+.card-list{display:flex;flex-direction:column;gap:0}
+.card-day{margin-bottom:20px}
+.card-day-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.card-day-lbl{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.card-day-lbl.today{color:var(--accent);font-weight:500}
+.card-day-line{flex:1;height:1px;background:var(--border)}
+.card-day-count{font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--surface2);padding:2px 8px;border-radius:20px}
+.card-games{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.card-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;transition:border-color .15s}
+.card-item:hover{border-color:var(--border2)}
+.card-item.my-game{border-color:rgba(34,211,238,.35);background:linear-gradient(135deg,var(--surface),rgba(34,211,238,.04))}
+.card-item.my-game::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.card-item.played-card{opacity:.5}
+.card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.card-league-badge{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:20px;white-space:nowrap}
+.card-time{font-size:11px;font-family:var(--mono);color:var(--muted);margin-left:auto}
+.card-teams{margin-bottom:8px}
+.card-team{font-size:13px;font-weight:500;color:var(--text);padding:2px 0;display:block}
+.card-team.hl{color:#fff}
+.card-vs{font-size:10px;color:var(--muted);font-family:var(--mono);padding:1px 0;display:block}
+.card-venue{font-size:11px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:4px}
+.card-venue::before{content:'';display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.card-footer{border-top:1px solid var(--border);padding-top:8px;display:flex;align-items:center}
+.card-played-btn{font-size:10px;font-family:var(--mono);border:none;border-radius:4px;padding:3px 8px;cursor:pointer;transition:all .15s}
+.card-played-btn.not-played{background:rgba(255,255,255,.06);color:var(--muted)}
+.card-played-btn.not-played:hover{background:rgba(74,222,128,.15);color:var(--green)}
+.card-played-btn.is-played{background:rgba(74,222,128,.15);color:var(--green)}
+.conflict-row-badge{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25);font-size:10px;padding:2px 8px;border-radius:20px;font-family:var(--mono)}
+
+@media(max-width:600px){
+  .card-games{grid-template-columns:1fr}
   .cfg{gap:6px}
-  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .tabs{width:100%}.tab{flex:1;text-align:center;padding:6px 4px}
 }
 </style>
 </head>
@@ -184,6 +214,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     </div>
     <button class="btn btn-ghost" id="myGamesBtn" onclick="toggleMyGamesOnly()" style="font-size:11px;padding:5px 12px">My games only</button>
     <button class="btn btn-ghost" id="pastBtn" onclick="togglePastGames()" style="font-size:11px;padding:5px 12px">Show past</button>
+    <div style="flex:1"></div>
+    <div style="display:flex;gap:2px;background:var(--surface2);border-radius:6px;padding:2px">
+      <button id="viewGrid" onclick="setView('grid')" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;background:var(--accent);color:#000;font-family:var(--sans)">Grid</button>
+      <button id="viewList" onclick="setView('list')" style="font-size:11px;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;background:transparent;color:var(--muted);font-family:var(--sans)">List</button>
+    </div>
     <button class="btn" onclick="loadData(true)" style="margin-left:4px">↻ Refresh</button>
     <span id="syncLbl" style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:8px"></span>
   </div>
@@ -222,7 +257,8 @@ let MIN_MAP = {};
 let PLAYED    = JSON.parse(localStorage.getItem('played')    || '{}');
 let MY_TEAMS  = JSON.parse(localStorage.getItem('myTeams')   || '[]');
 let MY_GAMES_ONLY = localStorage.getItem('myGamesOnly') === '1';
-let HIDE_PAST = localStorage.getItem('hidePast') !== '0'; // default TRUE — hide past games
+let HIDE_PAST = localStorage.getItem('hidePast') !== '0';
+let VIEW = localStorage.getItem('view') || (window.innerWidth < 640 ? 'list' : 'grid'); // auto list on mobile
 
 const LEAGUE_COLORS = ['#22d3ee','#4ade80','#fbbf24','#f97316','#a78bfa','#fb7185','#34d399'];
 const SCHED_COLS  = ['League Name','Sport','Year','Tournament','Match Date','Match Time','Home Team','Away Team','Venue','Match Status','Result','Scraped At'];
@@ -383,13 +419,23 @@ function gvizQuery(sheetId, tabName, timeoutMs, onSuccess, onError) {
 function buildUI(){
   buildTeamPicker();
   renderTeamChips();
-  // Restore toggle button states
   const mgBtn=document.getElementById('myGamesBtn');
   if(mgBtn && MY_GAMES_ONLY){ mgBtn.style.borderColor='var(--accent)'; mgBtn.style.color='var(--accent)'; mgBtn.textContent='✓ My games only'; }
   const pastBtn=document.getElementById('pastBtn');
   if(pastBtn){ pastBtn.style.borderColor=HIDE_PAST?'':'var(--accent)'; pastBtn.style.color=HIDE_PAST?'':'var(--accent)'; pastBtn.textContent=HIDE_PAST?'Show past':'Hide past'; }
+  setView(VIEW, false); // init view buttons without re-rendering
   renderCalendar();
   renderSummary();
+}
+
+function setView(v, doRender=true){
+  VIEW = v;
+  localStorage.setItem('view', v);
+  const gBtn=document.getElementById('viewGrid');
+  const lBtn=document.getElementById('viewList');
+  if(gBtn){ gBtn.style.background=v==='grid'?'var(--accent)':'transparent'; gBtn.style.color=v==='grid'?'#000':'var(--muted)'; }
+  if(lBtn){ lBtn.style.background=v==='list'?'var(--accent)':'transparent'; lBtn.style.color=v==='list'?'#000':'var(--muted)'; }
+  if(doRender) renderCalendar();
 }
 
 function renderTeamChips(){
@@ -525,6 +571,11 @@ function myTeamsForLeague(league){
 
 // ── Calendar grid render ──────────────────────────────────────────────────────
 function renderCalendar(){
+  if(VIEW === 'list') renderCardList();
+  else renderGrid();
+}
+
+function renderGrid(){
   const wrap=document.getElementById('calWrap');
   if(!ALL.length){ wrap.innerHTML=emptyHTML('🏏','No games','Sheet loaded but no game rows found.'); return; }
 
@@ -619,6 +670,103 @@ function renderCalendar(){
 
   html+=`</tbody></table>`;
   wrap.innerHTML=html;
+}
+
+// ── Card / list view (mobile-friendly) ────────────────────────────────────────
+function renderCardList(){
+  const wrap=document.getElementById('calWrap');
+  if(!ALL.length){ wrap.innerHTML=emptyHTML('🏏','No games','Sheet loaded but no game rows found.'); return; }
+
+  document.getElementById('calLegend').style.display=MY_TEAMS.length>0?'flex':'none';
+
+  const today=todayStr();
+  const leagues=uniqLeagues();
+  const leagueColors={};
+  leagues.forEach((l,i)=>leagueColors[l]=LEAGUE_COLORS[i%LEAGUE_COLORS.length]);
+
+  const byDate={};
+  ALL.forEach(g=>{ (byDate[g['Match Date']]=byDate[g['Match Date']]||[]).push(g); });
+  const dates=Object.keys(byDate).sort();
+
+  let html='<div class="card-list">';
+
+  dates.forEach(d=>{
+    const isPast=d<today;
+    if(HIDE_PAST && isPast) return;
+
+    let dayGames=byDate[d];
+    if(MY_GAMES_ONLY && MY_TEAMS.length>0){
+      dayGames=dayGames.filter(g=>isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']));
+    }
+    if(!dayGames.length) return;
+
+    const isToday=d===today;
+    const myLeagues=new Set();
+    dayGames.forEach(g=>{
+      if(isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']))
+        myLeagues.add(g['League Name']);
+    });
+    const hasConflict=myLeagues.size>1;
+
+    // Sort: my games first, then by time
+    dayGames=dayGames.sort((a,b)=>{
+      const aM=isMyTeam(a['League Name'],a['Home Team'])||isMyTeam(a['League Name'],a['Away Team']);
+      const bM=isMyTeam(b['League Name'],b['Home Team'])||isMyTeam(b['League Name'],b['Away Team']);
+      if(aM!==bM) return aM?-1:1;
+      return (a['Match Time']||'').localeCompare(b['Match Time']||'');
+    });
+
+    html+=`<div class="card-day">
+      <div class="card-day-hdr">
+        <span class="card-day-lbl ${isToday?'today':''}">${fmtDateShort(d,isToday)}</span>
+        ${hasConflict?'<span class="conflict-row-badge">⚠ conflict</span>':''}
+        <div class="card-day-line"></div>
+        <span class="card-day-count">${dayGames.length} game${dayGames.length!==1?'s':''}</span>
+      </div>
+      <div class="card-games">`;
+
+    dayGames.forEach(g=>{
+      const k=gkey(g);
+      const isDone=!!PLAYED[k];
+      const myGame=isMyTeam(g['League Name'],g['Home Team'])||isMyTeam(g['League Name'],g['Away Team']);
+      const color=leagueColors[g['League Name']]||'var(--accent)';
+      const home=g['Home Team']||'TBD', away=g['Away Team']||'TBD';
+
+      html+=`<div class="card-item ${myGame?'my-game':''} ${isDone?'played-card':''}" id="cl-${k}">
+        <div class="card-top">
+          <span class="card-league-badge" style="color:${color};background:${color}18">${g['League Name']}</span>
+          <span class="card-time">${g['Match Time']||''}</span>
+        </div>
+        <div class="card-teams">
+          <span class="card-team ${isMyTeam(g['League Name'],home)?'hl':''}">${home}</span>
+          <span class="card-vs">vs</span>
+          <span class="card-team ${isMyTeam(g['League Name'],away)?'hl':''}">${away}</span>
+        </div>
+        ${g['Venue']?`<div class="card-venue">${g['Venue']}</div>`:''}
+        <div class="card-footer">
+          <button class="card-played-btn ${isDone?'is-played':'not-played'}"
+            onclick="togglePlayedCard('${k}','cl-${k}',this)">
+            ${isDone?'✓ played':'mark played'}
+          </button>
+        </div>
+      </div>`;
+    });
+
+    html+=`</div></div>`;
+  });
+
+  html+='</div>';
+  wrap.innerHTML=html;
+}
+
+function togglePlayedCard(k,cardId,btn){
+  const isDone=!!PLAYED[k];
+  if(isDone){ delete PLAYED[k]; } else { PLAYED[k]=true; }
+  localStorage.setItem('played',JSON.stringify(PLAYED));
+  const card=document.getElementById(cardId);
+  if(card){ card.classList.toggle('played-card',!isDone); }
+  if(btn){ btn.className='card-played-btn '+(isDone?'not-played':'is-played'); btn.textContent=isDone?'mark played':'✓ played'; }
+  renderSummary();
 }
 
 function togglePlayed(k,cardId,btn){
